@@ -54,9 +54,9 @@ async function sendEmailNotification(userId, project) {
 
         // Setup email data
         let mailOptions = {
-            from: '"Uni Plan" <yourapp@example.com>',
+            from: '"Uni Plan" <uniplan@roc-teraa.com>',
             to: user.email,
-            subject: 'New Project Created',
+            subject: 'Nieuw project aangemaakt!',
             text: `Beste ${user.firstname},\n\n U bent toegevoegd aan het project: ${project.project_name}.\n\nProject Bio: ${project.project_bio}\n\nMet vriendelijke,\nHet Uni Plan Team`
         };
 
