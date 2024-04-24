@@ -10,6 +10,16 @@
 </head>
 
 <body>
+    <h1>All Projects</h1>
+    <div class="wrapper">
+        <% projects.forEach(project => { %>
+        <div class="card">
+            <h2><%= project.project_name %></h2>
+            <p><%= project.project_bio %></p>
+            <a href="/project/id=<%= project.project_id %>">View Project</a>
+        </div>
+        <% }); %>
+    </div>
 
 </body>
 

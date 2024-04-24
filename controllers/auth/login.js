@@ -21,6 +21,7 @@ exports.login = async (req, res) => {
                 email: email
             },
             select: {
+                user_id: true,
                 email: true,
                 password: true,
                 firstname: true,
@@ -46,6 +47,7 @@ exports.login = async (req, res) => {
 
             req.session.isAuthenticated = true;
 
+            req.session.loggedInUser = user.user_id;
             req.session.firstname = user.firstname;
             req.session.lastname = user.lastname;
 
