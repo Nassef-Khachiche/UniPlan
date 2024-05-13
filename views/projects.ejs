@@ -10,10 +10,10 @@
 <body>
     <%- include('../public/partials/navbar'); %>
 
-    <h1 class="m-4">All Projects</h1>
+    <h1 class="m-4 text-center">All Projects</h1>
 
     <div class="container">
-        <div class="wrapper">
+        <div class="wrapper text-center">
             <% projects.forEach(project => { %>
             <div class="card">
                 <h2><%= project.project_name %></h2>
