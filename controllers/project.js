@@ -73,8 +73,8 @@ async function sendEmailNotification(userId, project) {
 exports.view_project = async (req, res) => {
     try {
         // Extract project id from the URL query
-        const projectId = parseInt(req.query.id);
-
+        const projectId = parseInt(req.params.id);
+        
         // Check if the user is authenticated
         if (!req.session.isAuthenticated || !req.session.loggedInUser) {
             res.status(401).json({
@@ -88,9 +88,14 @@ exports.view_project = async (req, res) => {
             where: {
                 project_id: projectId
             },
-            include: {
-                users: true // Include the user associated with the project
-            }
+        });
+
+        console.log(project);
+
+        const user = await prisma.users.findUnique({
+            where: {
+                user_id: projectId
+            },
         });
 
         // Check if the project exists
@@ -109,7 +114,8 @@ exports.view_project = async (req, res) => {
             return;
         }
 
-        res.status(200).json(project);
+        res.render('project', { project: project, user: user })
+        
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -124,7 +130,7 @@ exports.all_projects = async (req, res) => {
         const projects = await prisma.projects.findMany();
 
         // Render the EJS template with projects data
-        res.render('dashboard', { projects });
+        res.render('projects', { projects: projects });
 
     } catch (error) {
         console.error(error);

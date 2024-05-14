@@ -16,7 +16,7 @@ router.post('/login', login);
 router.get('/register', get_register);
 router.post('/register', register);
 
-router.get('/dashboard', all_projects); // Route to view all projects
+router.get('/projects', all_projects); // Route to view all projects
 router.get('/project/:id', view_project); // Route to view a specific project by id
 
 module.exports = router;
