@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniPlan ● Create Project</title>
+
+    <link rel="icon" type="image/x-icon" href="/public/img/UniPlan Icon.png">
+    <link rel="stylesheet" href="../public/css/style.css">
+</head>
+
+<body>
+    <%- include('../public/partials/navbar'); %>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h1 class="mb-4">Create Project</h1>
+                <form id="createProjectForm" action="/create/project" method="post">
+                    <div class="form-group">
+                        <label for="projectName">Project Name</label>
+                        <input type="text" class="form-control" id="projectName" name="project_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectBio">Project Bio</label>
+                        <textarea class="form-control" id="projectBio" name="project_bio" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail">Your Email</label>
+                        <input type="email" class="form-control" id="userEmail" name="user_email" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3 submit-button">Create Project</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

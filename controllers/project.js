@@ -1,6 +1,15 @@
 const { prisma } = require("../prisma/connection");
 const nodemailer = require('nodemailer');
 
+exports.view_cr_project = async (req, res) => {
+    if (!req.session.isAuthenticated) {
+        res.render('auth/login');
+    }
+    else {
+        res.render('create-project', { req: req });
+    }
+}
+
 exports.create_project = async (req, res) => {
     let {
         project_name,
@@ -21,12 +30,20 @@ exports.create_project = async (req, res) => {
             data: {
                 project_name: project_name,
                 project_bio: project_bio,
-                created_by: req.session.loggedInUser // Take user_id from session
+                created_by: req.session.loggedInUser, // Take user_id from session
+                project_member: {
+                    create: {
+                        user_id: req.session.loggedInUser
+                    }
+                }
+            },
+            include: {
+                project_member: true // Include project members in the returned project
             }
         });
 
         // Send email notification
-        sendEmailNotification(req.session.loggedInUser, project);
+        await sendEmailNotification(req.session.loggedInUser, project);
 
         res.status(201).json(project);
     } catch (error) {
@@ -49,7 +66,12 @@ async function sendEmailNotification(userId, project) {
 
         // Create a nodemailer transporter
         let transporter = nodemailer.createTransport({
-            /* transporter options, like service, auth, etc. */
+            /* Configure your transporter options here */
+            service: 'Gmail', // Change this to your email service provider
+            auth: {
+                user: 'nassefkhachiche1@gmail.com', // Your email address
+                pass: 'Besboe*415nk5' // Your email password
+            }
         });
 
         // Setup email data
@@ -69,12 +91,11 @@ async function sendEmailNotification(userId, project) {
     }
 }
 
-
 exports.view_project = async (req, res) => {
     try {
         // Extract project id from the URL query
         const projectId = parseInt(req.params.id);
-        
+
         // Check if the user is authenticated
         if (!req.session.isAuthenticated || !req.session.loggedInUser) {
             res.status(401).json({
@@ -115,7 +136,7 @@ exports.view_project = async (req, res) => {
         }
 
         res.render('project', { project: project, user: user })
-        
+
     } catch (error) {
         console.error(error);
         res.status(500).json({
