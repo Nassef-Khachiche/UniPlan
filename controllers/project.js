@@ -6,7 +6,8 @@ exports.view_cr_project = async (req, res) => {
         res.render('auth/login');
     }
     else {
-        res.render('create-project', { req: req });
+        const users = await prisma.users.findMany();
+        res.render('create-project', { req: req, users: users });
     }
 }
 
@@ -45,7 +46,7 @@ exports.create_project = async (req, res) => {
         // Send email notification
         await sendEmailNotification(req.session.loggedInUser, project);
 
-        res.status(201).json(project);
+        res.render('create-project', { req: req });
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -67,7 +68,7 @@ async function sendEmailNotification(userId, project) {
         // Create a nodemailer transporter
         let transporter = nodemailer.createTransport({
             /* Configure your transporter options here */
-            service: 'Gmail', // Change this to your email service provider
+            service: 'gmail', // Change this to your email service provider
             auth: {
                 user: 'nassefkhachiche1@gmail.com', // Your email address
                 pass: 'Besboe*415nk5' // Your email password
@@ -110,8 +111,6 @@ exports.view_project = async (req, res) => {
                 project_id: projectId
             },
         });
-
-        console.log(project);
 
         const user = await prisma.users.findUnique({
             where: {

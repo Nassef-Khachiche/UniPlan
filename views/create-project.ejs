@@ -26,10 +26,23 @@
                         <label for="projectBio">Project Bio</label>
                         <textarea class="form-control" id="projectBio" name="project_bio" required></textarea>
                     </div>
-                    <div class="form-group">
-                        <label for="userEmail">Your Email</label>
-                        <input type="email" class="form-control" id="userEmail" name="user_email" required>
+
+                    <div class="dropdown">
+                        <label for="addUser" class="mt-2">Add user</label>
+                        <input type="text" class="search-box form-control" placeholder="Search..." onkeyup="filterFunction()">
+                        
+                        <select class="dropdown-content form-control mt-1 limited" name="dropdown" id="myDropdown" onchange="selectUser(this)">
+                            <option value="">...</option>
+                    
+                            <% users.forEach(user => { %>
+                                <option value="<%= user.email %>"><%= user.lastname + ", " + user.firstname %></option>
+                            <% }); %>
+                    
+                        </select>
                     </div>
+                    
+                    <script src="../public/js/search-box.js"></script>
+                    
                     <button type="submit" class="btn btn-primary mt-3 submit-button">Create Project</button>
                 </form>
             </div>
