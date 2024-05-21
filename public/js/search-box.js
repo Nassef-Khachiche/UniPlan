@@ -23,7 +23,7 @@ function updateSelectedUsers() {
         
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = 'btn btn-danger btn-sm';
+        button.className = 'btn btn-danger btn-sm my-1';
         button.textContent = 'Remove';
         button.onclick = () => removeUser(email);
 

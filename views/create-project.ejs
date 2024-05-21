@@ -26,45 +26,53 @@
                     <div class="form-group mb-2">
                         <label for="projectBio">Project Bio</label>
                         <textarea class="form-control" id="projectBio" name="project_bio" required></textarea>
+                        <input class="form-control mt-2" type="file" name="file" id="formFile">
                     </div>
 
-                    <div class="form-group mb-2">
-                        <label for="RelatedColleges">Related Colleges</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="related_colleges" value="ICT" id="ict">
-                            <label class="form-check-label badge bg-primary text-white rounded-pill px-2 py-1 me-2" for="ict">ICT</label>
+                    <label for="RelatedColleges" class="mt-3">Related Colleges</label>
+                    <div class="form-group mb-2 d-flex align-items-center justify-content-between">
+                        <div class="wrapper">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ict" value="ICT" id="ict">
+                                <label class="form-check-label badge bg-primary text-white rounded-pill px-2 py-1 me-2" for="ict">ICT</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="houtwerk" value="Metaal- en Houtwerk" id="metaal">
+                                <label class="form-check-label badge bg-success text-white rounded-pill px-2 py-1 me-2" for="metaal">Metaal- en Houtwerk</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="buisness" value="Business" id="buisness">
+                                <label class="form-check-label badge bg-info text-white rounded-pill px-2 py-1 me-2" for="buisness">Business</label>
+                            </div>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="related_colleges" value="Metaal- en Houtwerk" id="metaal">
-                            <label class="form-check-label badge bg-success text-white rounded-pill px-2 py-1 me-2" for="metaal">Metaal- en Houtwerk</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="related_colleges" value="Techniek en Electrician" id="techniek">
-                            <label class="form-check-label badge bg-dark text-white rounded-pill px-2 py-1 me-2" for="techniek">Techniek en Electrician</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="related_colleges" value="Zorg en Welzijn" id="zorg">
-                            <label class="form-check-label badge bg-danger text-white rounded-pill px-2 py-1 me-2" for="zorg">Zorg en Welzijn</label>
+                        <div class="wrapper">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="techniek" value="Techniek en technologie" id="techniek">
+                                <label class="form-check-label badge bg-dark text-white rounded-pill px-2 py-1 me-2" for="techniek">Techniek en technologie</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="zorg" value="Zorg en Welzijn" id="zorg">
+                                <label class="form-check-label badge bg-danger text-white rounded-pill px-2 py-1 me-2" for="zorg">Zorg en Welzijn</label>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="dropdown">
+                    <div class="dropdown mt-3">
                         <label for="addUser" class="mt-2">Add user(s)</label>
-                        <input type="text" class="search-box form-control" placeholder="Search..." onkeyup="filterFunction()">
-                        
-                        <select class="dropdown-content form-control mt-1 limited" id="myDropdown" onchange="selectUser(this)">
-                            <option value="">...</option>
+                        <input type="text" class="form-control mt-1" id="userSearchInput" placeholder="Search..." onkeyup="filterUsers()">
+
+                        <select multiple class="dropdown-content form-control mt-1 limited" id="myDropdown" size="5" onchange="selectUser(this)">
                             <% users.forEach(user => { %>
-                                <option value="<%= user.email %>"><%= user.lastname + ", " + user.firstname %></option>
+                            <option value="<%= user.email %>"><%= user.lastname + ", " + user.firstname %></option>
                             <% }); %>
                         </select>
                     </div>
-                    
+
                     <div id="selectedUsers" class="mt-1">
                         <!-- Selected users will appear here -->
                     </div>
-                    
-                    <button type="submit" class="btn btn-primary mt-2 submit-button">Create Project</button>
+
+                    <button type="submit" class="btn btn-primary my-2 submit-button float-start">Create Project</button>
                 </form>
             </div>
         </div>

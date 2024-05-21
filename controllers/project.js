@@ -22,10 +22,8 @@ exports.create_project = async (req, res) => {
             return;
         }
 
-        // Ensure users is an array
-        if (!Array.isArray(users)) {
-            users = [];
-        }
+        // Extract project details from the request body
+        const { project_name, project_bio, ict, houtwerk, buisness, techniek, zorg } = req.body;
 
         // Get the logged-in user's ID
         const creatorId = req.session.loggedInUser;
@@ -36,30 +34,63 @@ exports.create_project = async (req, res) => {
             return;
         }
 
-        // Create the project
+        // Extract selected users from the request body (ensure it is an array)
+        let { users } = req.body;
+        if (!Array.isArray(users)) {
+            users = [];
+        }
+
+        // List of selected colleges
+        const selectedColleges = [];
+        if (ict) selectedColleges.push('ict');
+        if (houtwerk) selectedColleges.push('houtwerk');
+        if (buisness) selectedColleges.push('business');
+        if (techniek) selectedColleges.push('techniek');
+        if (zorg) selectedColleges.push('zorg');
+
+        // Ensure selected colleges exist in the database
+        const collegeRecords = await Promise.all(
+            selectedColleges.map(async (college) => {
+                return prisma.colleges.upsert({
+                    where: { college_name: college },
+                    update: {},
+                    create: { college_name: college },
+                });
+            })
+        );
+
+        // Create the project with associated users and colleges
         const project = await prisma.projects.create({
             data: {
-                project_name: project_name,
-                project_bio: project_bio,
+                project_name,
+                project_bio,
                 created_by: creatorId,
                 project_member: {
                     create: users.map(email => ({
                         users: {
-                            connect: { email: email }
+                            connect: { email }
                         }
                     }))
                 },
+                project_college: {
+                    create: collegeRecords.map(college => ({
+                        colleges: {
+                            connect: { college_id: college.college_id }
+                        }
+                    }))
+                }
             },
             include: {
-                project_member: true
+                project_member: true,
+                project_college: true
             }
         });
 
         // Send email notifications
         await Promise.all(users.map(email => sendEmailNotification(email, project)));
 
-        const userList  = await prisma.users.findMany();
-        res.render('create-project', { req: req, users: userList  });
+        const userList = await prisma.users.findMany();
+        res.render('create-project', { req, users: userList });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });

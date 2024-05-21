@@ -25,9 +25,7 @@ body {
     align-items: center;
     border-radius: 10px;
     padding: 5px 25px 25px 25px;
-    /* Add back default padding */
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
-    /* Add back default box-shadow */
 }
 
 .card {
@@ -75,6 +73,67 @@ body {
     left: 0;
 }
 
+.dashboard-wrapper1 {
+    height: 700px; 
+    background-image: url(https://roc-teraa.nl/wp-content/uploads/2019/09/KML-alg-4.jpg); 
+    background-size: cover;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dashboard-wrapper2 {
+    height: 550px; 
+
+    display: flex;
+    justify-content: center;
+}
+
+.dashboard-wrapper2 div {
+  width: 800px;
+  height: 100%;
+}
+
+.dashboard-wrapper3 {
+    width: 100%;
+    height: 200px;
+}
+  
+
+.green {
+    background-color: var(--roc-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pink {
+    background-color: var(--roc-pink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.yellow {
+    background-color: var(--roc-yellow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.white-spacer {
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.black-footer {
+    height: 100%;
+    background-color: #000000;
+}
+
 .dashboard-container {
     text-align: center;
     background-color: #fff;
@@ -83,7 +142,6 @@ body {
     max-width: 600px;
     width: 100%;
     margin: 0 auto; /* This will center the container */
-    margin-top: 50px; /* Optional: add some top margin */
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Optional: add box shadow */
 }
 
@@ -114,6 +172,15 @@ main button:hover {
 
 /* Media Query for screens smaller than 900 pixels */
 @media (max-width: 900px) {
+
+    .dashboard-container {
+        padding: 0px;
+        background: none;
+    }
+
+    .dashboard-container header h1, .dashboard-container header p {
+        color: var(--main-bg-color);
+    }
 
     .login-container {
         padding: 5px;
