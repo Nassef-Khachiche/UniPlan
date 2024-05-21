@@ -20,13 +20,13 @@ exports.login = async (req, res) => {
             where:{
                 email: email
             },
-            select: {
-                user_id: true,
-                email: true,
-                password: true,
-                firstname: true,
-                lastname: true
-            },
+                select: {
+                    user_id: true,
+                    email: true,
+                    password: true,
+                    firstname: true,
+                    lastname: true
+                },
         });
 
 

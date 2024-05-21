@@ -12,17 +12,26 @@ exports.view_cr_project = async (req, res) => {
 }
 
 exports.create_project = async (req, res) => {
-    let {
-        project_name,
-        project_bio
-    } = req.body;
+    let { project_name, project_bio, users } = req.body;
 
     try {
         // Check if the user is authenticated
         if (!req.session.isAuthenticated || !req.session.loggedInUser) {
-            res.status(401).json({
-                message: 'Unauthorized'
-            });
+            res.render('auth/login');
+            return;
+        }
+
+        // Ensure users is an array
+        if (!Array.isArray(users)) {
+            users = [];
+        }
+
+        // Get the logged-in user's ID
+        const creatorId = req.session.loggedInUser;
+
+        // Check if the creatorId is defined
+        if (!creatorId) {
+            res.status(400).json({ message: 'Invalid creator ID' });
             return;
         }
 
@@ -31,47 +40,49 @@ exports.create_project = async (req, res) => {
             data: {
                 project_name: project_name,
                 project_bio: project_bio,
-                created_by: req.session.loggedInUser, // Take user_id from session
+                created_by: creatorId,
                 project_member: {
-                    create: {
-                        user_id: req.session.loggedInUser
-                    }
-                }
+                    create: users.map(email => ({
+                        users: {
+                            connect: { email: email }
+                        }
+                    }))
+                },
             },
             include: {
-                project_member: true // Include project members in the returned project
+                project_member: true
             }
         });
 
-        // Send email notification
-        await sendEmailNotification(req.session.loggedInUser, project);
+        // Send email notifications
+        await Promise.all(users.map(email => sendEmailNotification(email, project)));
 
-        res.render('create-project', { req: req });
+        const userList  = await prisma.users.findMany();
+        res.render('create-project', { req: req, users: userList  });
     } catch (error) {
         console.error(error);
-        res.status(500).json({
-            message: 'Internal Server Error'
-        });
+        res.status(500).json({ message: 'Internal Server Error' });
     }
-}
+};
 
 // Function to send email notification
-async function sendEmailNotification(userId, project) {
+async function sendEmailNotification(email, project) {
     try {
         // Retrieve user details
         const user = await prisma.users.findUnique({
-            where: {
-                user_id: userId
-            }
+            where: { email: email }
         });
+
+        if (!user) {
+            throw new Error(`User with email ${email} not found`);
+        }
 
         // Create a nodemailer transporter
         let transporter = nodemailer.createTransport({
-            /* Configure your transporter options here */
-            service: 'gmail', // Change this to your email service provider
+            service: 'gmail',
             auth: {
-                user: 'nassefkhachiche1@gmail.com', // Your email address
-                pass: 'Besboe*415nk5' // Your email password
+                user: 'nassefkhachiche1@gmail.com',
+                pass: 'Besboe*415nk5'
             }
         });
 
@@ -80,7 +91,7 @@ async function sendEmailNotification(userId, project) {
             from: '"Uni Plan" <uniplan@roc-teraa.com>',
             to: user.email,
             subject: 'Nieuw project aangemaakt!',
-            text: `Beste ${user.firstname},\n\n U bent toegevoegd aan het project: ${project.project_name}.\n\nProject Bio: ${project.project_bio}\n\nMet vriendelijke,\nHet Uni Plan Team`
+            text: `Beste ${user.firstname},\n\n U bent toegevoegd aan het project: ${project.project_name}.\n\nProject Bio: ${project.project_bio}\n\nMet vriendelijke groet,\nHet Uni Plan Team`
         };
 
         // Send the email
@@ -118,6 +129,12 @@ exports.view_project = async (req, res) => {
             },
         });
 
+        const members = await prisma.project_member.findMany({
+            where: {
+                project_id: projectId
+            },
+        });
+
         // Check if the project exists
         if (!project) {
             res.status(404).json({
@@ -134,7 +151,7 @@ exports.view_project = async (req, res) => {
             return;
         }
 
-        res.render('project', { project: project, user: user })
+        res.render('project', { project: project, user: user, members: members })
 
     } catch (error) {
         console.error(error);
@@ -144,16 +161,32 @@ exports.view_project = async (req, res) => {
     }
 }
 
+
 exports.all_projects = async (req, res) => {
     try {
-        // Retrieve all projects
-        const projects = await prisma.projects.findMany();
+        let projects;
+        const { searchQuery } = req.query;
+
+        if (searchQuery) {
+            // If there is a search query, filter projects by project_name or project_bio
+            projects = await prisma.projects.findMany({
+                where: {
+                    OR: [
+                        { project_name: { contains: searchQuery, mode: 'insensitive' } },
+                        { project_bio: { contains: searchQuery, mode: 'insensitive' } }
+                    ]
+                }
+            });
+        } else {
+            // Otherwise, retrieve all projects
+            projects = await prisma.projects.findMany();
+        }
 
         // Render the EJS template with projects data
-        res.render('projects', { projects: projects });
+        res.render('projects', { projects: projects, searchQuery: searchQuery });
 
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
-}
+};

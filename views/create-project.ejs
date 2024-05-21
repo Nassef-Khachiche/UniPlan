@@ -15,7 +15,7 @@
 
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-6">
+            <div class="col-md-6 m-3 p-5 shadow rounded">
                 <h1 class="mb-4">Create Project</h1>
                 <form id="createProjectForm" action="/create/project" method="post">
                     <div class="form-group">
@@ -28,20 +28,20 @@
                     </div>
 
                     <div class="dropdown">
-                        <label for="addUser" class="mt-2">Add user</label>
+                        <label for="addUser" class="mt-2">Add user(s)</label>
                         <input type="text" class="search-box form-control" placeholder="Search..." onkeyup="filterFunction()">
                         
-                        <select class="dropdown-content form-control mt-1 limited" name="dropdown" id="myDropdown" onchange="selectUser(this)">
+                        <select class="dropdown-content form-control mt-1 limited" id="myDropdown" onchange="selectUser(this)">
                             <option value="">...</option>
-                    
                             <% users.forEach(user => { %>
                                 <option value="<%= user.email %>"><%= user.lastname + ", " + user.firstname %></option>
                             <% }); %>
-                    
                         </select>
                     </div>
                     
-                    <script src="../public/js/search-box.js"></script>
+                    <div id="selectedUsers" class="mt-2">
+                        <!-- Selected users will appear here -->
+                    </div>
                     
                     <button type="submit" class="btn btn-primary mt-3 submit-button">Create Project</button>
                 </form>
@@ -49,6 +49,7 @@
         </div>
     </div>
 
+    <script src="../public/js/search-box.js"></script>
 </body>
 
 </html>

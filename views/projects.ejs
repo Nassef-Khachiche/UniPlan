@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UniPlan ● projects</title>
+
+    <link rel="icon" type="image/x-icon" href="/public/img/UniPlan Icon.png">
+    <link rel="stylesheet" href="../public/css/style.css">
 </head>
 
 <body>
@@ -12,17 +15,27 @@
 
     <h1 class="m-4 text-center">All Projects</h1>
 
-    <div class="container">
+    <div class="container align-items-center justify-content-center d-flex flex-column">
+        <input type="text" class="search-box form-control w-50" placeholder="Search by name or bio"
+            onkeyup="filterProjects(this.value)">
+
         <div class="wrapper text-center">
+            <% if (!projects || projects.length === 0) { %>
+            <p>No projects found.</p>
+            <% } else { %>
             <% projects.forEach(project => { %>
-            <div class="card">
+            <div class="card project-card">
                 <h2><%= project.project_name %></h2>
                 <p><%= project.project_bio %></p>
                 <a href="/project/<%= project.project_id %>">View Project</a>
             </div>
             <% }); %>
+            <% } %>
         </div>
     </div>
+
+    <script src="../public/js/search-projects.js"></script>
+
 </body>
 
 </html>

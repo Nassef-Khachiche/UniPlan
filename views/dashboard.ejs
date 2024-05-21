@@ -10,13 +10,20 @@
     <link rel="stylesheet" href="../public/css/style.css">
 </head>
 
-<body>
+<body style="background-image: url(https://roc-teraa.nl/wp-content/uploads/2019/09/KML-alg-4.jpg); background-size: 100%;">
     <%- include('../public/partials/navbar'); %>
 
-    <div class="container">
-        <div class="wrapper">
-            <h1>Welcome, <%= req.session.firstname %></h1>
-        </div>
+    <div class="dashboard-container">
+
+        <header>
+            <h1>Welcome to Uniplan</h1>
+            <p>Your ultimate tool for connecting teachers and students to ensure project success.</p>
+        </header>
+        <main>
+            <button onclick="window.location.href='/create/project'">Create a Project</button>
+            <button onclick="window.location.href='/projects'">Help with a Project</button>
+        </main>
+
     </div>
 </body>
 
