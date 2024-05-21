@@ -1,3 +1,4 @@
+const { log } = require("console");
 const { prisma } = require("../prisma/connection");
 const nodemailer = require('nodemailer');
 
@@ -123,15 +124,24 @@ exports.view_project = async (req, res) => {
             },
         });
 
-        const user = await prisma.users.findUnique({
-            where: {
-                user_id: projectId
-            },
-        });
-
         const members = await prisma.project_member.findMany({
             where: {
                 project_id: projectId
+            },
+        });
+
+
+        let memberArray = [];
+        members.forEach(member => {
+            memberArray.push(member.user_id);
+        });
+
+
+        const users = await prisma.users.findMany({
+            where: {
+                user_id: {
+                    in: memberArray
+                }
             },
         });
 
@@ -151,7 +161,7 @@ exports.view_project = async (req, res) => {
             return;
         }
 
-        res.render('project', { project: project, user: user, members: members })
+        res.render('project', { project: project, members: users })
 
     } catch (error) {
         console.error(error);

@@ -13,18 +13,39 @@
 <body>
     <%- include('../public/partials/navbar'); %>
 
-    <div class="container mt-5">
+    <div class="container mt-3">
         <div class="row justify-content-center">
-            <div class="col-md-6 m-3 p-5 shadow rounded">
+            <div class="col-md-6 m-1 p-3 p-sm-5 shadow rounded">
                 <h1 class="mb-4">Create Project</h1>
                 <form id="createProjectForm" action="/create/project" method="post">
                     <div class="form-group">
                         <label for="projectName">Project Name</label>
                         <input type="text" class="form-control" id="projectName" name="project_name" required>
                     </div>
-                    <div class="form-group">
+
+                    <div class="form-group mb-2">
                         <label for="projectBio">Project Bio</label>
                         <textarea class="form-control" id="projectBio" name="project_bio" required></textarea>
+                    </div>
+
+                    <div class="form-group mb-2">
+                        <label for="RelatedColleges">Related Colleges</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="related_colleges" value="ICT" id="ict">
+                            <label class="form-check-label badge bg-primary text-white rounded-pill px-2 py-1 me-2" for="ict">ICT</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="related_colleges" value="Metaal- en Houtwerk" id="metaal">
+                            <label class="form-check-label badge bg-success text-white rounded-pill px-2 py-1 me-2" for="metaal">Metaal- en Houtwerk</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="related_colleges" value="Techniek en Electrician" id="techniek">
+                            <label class="form-check-label badge bg-dark text-white rounded-pill px-2 py-1 me-2" for="techniek">Techniek en Electrician</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="related_colleges" value="Zorg en Welzijn" id="zorg">
+                            <label class="form-check-label badge bg-danger text-white rounded-pill px-2 py-1 me-2" for="zorg">Zorg en Welzijn</label>
+                        </div>
                     </div>
 
                     <div class="dropdown">
@@ -39,11 +60,11 @@
                         </select>
                     </div>
                     
-                    <div id="selectedUsers" class="mt-2">
+                    <div id="selectedUsers" class="mt-1">
                         <!-- Selected users will appear here -->
                     </div>
                     
-                    <button type="submit" class="btn btn-primary mt-3 submit-button">Create Project</button>
+                    <button type="submit" class="btn btn-primary mt-2 submit-button">Create Project</button>
                 </form>
             </div>
         </div>

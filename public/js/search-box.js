@@ -1,4 +1,3 @@
-
 let selectedUsers = new Set();
 
 function selectUser(select) {
@@ -43,12 +42,12 @@ function updateSelectedUsers() {
     });
 }
 
-function filterFunction() {
-    var input, filter, div, options;
-    input = document.querySelector(".search-box");
+function filterUsers() {
+    var input, filter, select, options;
+    input = document.getElementById("userSearchInput");
     filter = input.value.toUpperCase();
-    div = document.getElementById("myDropdown");
-    options = div.getElementsByTagName("option");
+    select = document.getElementById("myDropdown");
+    options = select.getElementsByTagName("option");
     for (var i = 0; i < options.length; i++) {
         var txtValue = options[i].textContent || options[i].innerText;
         if (txtValue.toUpperCase().indexOf(filter) > -1) {

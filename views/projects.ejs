@@ -16,16 +16,47 @@
     <h1 class="m-4 text-center">All Projects</h1>
 
     <div class="container align-items-center justify-content-center d-flex flex-column">
-        <input type="text" class="search-box form-control w-50" placeholder="Search by name or bio"
+        <input type="text" class="search-box form-control w-50 mb-4" placeholder="Search by name or bio"
             onkeyup="filterProjects(this.value)">
+        <div class="wrapper d-sm-flex align-items-centers justify-content-center mb-3">
+            <label for="RelatedColleges" class="mx-sm-4"> <b>Filter on related college</b></label>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="related_colleges" value="ICT" id="ict">
+                <label class="form-check-label badge bg-primary text-white rounded-pill px-2 py-1 me-2"
+                    for="ict">ICT</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="related_colleges" value="Metaal- en Houtwerk"
+                    id="metaal">
+                <label class="form-check-label badge bg-success text-white rounded-pill px-2 py-1 me-2"
+                    for="metaal">Metaal- en Houtwerk</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="related_colleges" value="Techniek en Electrician"
+                    id="techniek">
+                <label class="form-check-label badge bg-dark text-white rounded-pill px-2 py-1 me-2"
+                    for="techniek">Techniek en Electrician</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="related_colleges" value="Zorg en Welzijn"
+                    id="zorg">
+                <label class="form-check-label badge bg-danger text-white rounded-pill px-2 py-1 me-2" for="zorg">Zorg
+                    en Welzijn</label>
+            </div>
+        </div>
 
         <div class="wrapper text-center">
             <% if (!projects || projects.length === 0) { %>
             <p>No projects found.</p>
             <% } else { %>
             <% projects.forEach(project => { %>
-            <div class="card project-card">
-                <h2><%= project.project_name %></h2>
+            <div class="card project-card position-relative">
+                <div class="pill-container d-flex position-absolute top-0 start-0 m-2">
+                    <div class="pill bg-primary badge badge-primary rounded me-1">ICT</div>
+                    <!-- <div class="pill bg-danger badge badge-primary rounded me-1">Techniek</div> -->
+                </div>
+
+                <h2 class="mt-2"><%= project.project_name %></h2>
                 <p><%= project.project_bio %></p>
                 <a href="/project/<%= project.project_id %>">View Project</a>
             </div>
