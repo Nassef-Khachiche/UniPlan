@@ -33,7 +33,7 @@ body {
     border-radius: 5px;
     padding: 20px;
     margin: 10px;
-    width: 300px;
+    width: 350px;
     display: inline-block;
     text-align: center;
 }
@@ -74,7 +74,7 @@ body {
 }
 
 .dashboard-wrapper1 {
-    height: 700px; 
+    height: 100vh; 
     background-image: url(https://roc-teraa.nl/wp-content/uploads/2019/09/KML-alg-4.jpg); 
     background-size: cover;
 
@@ -169,6 +169,32 @@ main button {
 main button:hover {
     background-color: var(--roc-green);
 }
+
+
+/* bg-colors for colleges */
+
+.bg-buisness {
+    background-color: #17a2b8;
+}
+
+.bg-ict {
+    background-color: #007bff;
+}
+
+.bg-houtwerk {
+    background-color: #28a745;
+}
+
+.bg-techniek {
+    background-color: #343a40;
+}
+
+.bg-zorg {
+    background-color: #dc3545;
+}
+
+
+
 
 /* Media Query for screens smaller than 900 pixels */
 @media (max-width: 900px) {

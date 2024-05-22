@@ -15,18 +15,27 @@
         <div class="wrapper m-4">
             <b>Files or Images added.</b>
             <div class="column">
-              <img width="200" src="https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary.svg" >
+                <img width="200" src="https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary.svg">
             </div>
-          </div>
+        </div>
         <div class="wrapper m-4">
             <p><%= project.project_bio %></p>
 
+            <% if (colleges) { %>
+            <div class="wrapper d-flex">
+                <% colleges.forEach(college => { %>
+                    <label class="form-check-label badge bg-<%-college.college_name%> text-white rounded-pill px-2 py-1 me-2" for="college"><%- college.college_name %></label>
+                <% }); %>
+            </div>
+            <% } else { %> 
+                <p class="my-2">*No colleges have been added to this project</p>
+            <% } %>
 
             <br>
-            <b>Users added to this project.</b> 
-            <p><i class="ri-vip-crown-fill"></i> Benjamin Porobic</p>       
+            <b>Users added to this project.</b>
+            <p><i class="ri-vip-crown-fill"></i> Benjamin Porobic</p>
             <% members.forEach(member => { %>
-                <p><i class="ri-user-fill"></i><%- " " + member.firstname + " " + member.lastname %></p>
+            <p><i class="ri-user-fill"></i><%- " " + member.firstname + " " + member.lastname %></p>
             <% }); %>
             <button class="submit-button mb-2">Add or remove a user</button>
             <br>

@@ -39,16 +39,16 @@ model project_member {
 }
 
 model colleges {
-  college_id     Int                  @id @default(autoincrement())
-  college_name   String               @db.VarChar(255)
+  college_id     Int                     @id @default(autoincrement())
+  college_name   String                  @unique @db.VarChar(255)
   project_college   project_college[]
 }
 
 model project_college {
   project_id        Int
-  college_id     Int
+  college_id        Int
   projects          projects             @relation(fields: [project_id], references: [project_id], onDelete: Cascade)
-  colleges       colleges             @relation(fields: [college_id], references: [college_id], onDelete: Cascade)
+  colleges          colleges             @relation(fields: [college_id], references: [college_id], onDelete: Cascade)
 
   @@id([project_id, college_id])
 }

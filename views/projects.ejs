@@ -32,10 +32,8 @@
                     for="metaal">Metaal- en Houtwerk</label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="related_colleges" value="Techniek en Electrician"
-                    id="techniek">
-                <label class="form-check-label badge bg-dark text-white rounded-pill px-2 py-1 me-2"
-                    for="techniek">Techniek en Electrician</label>
+                <input class="form-check-input" type="checkbox" name="related_colleges" value="Techniek en technologie"id="techniek">
+                    <label class="form-check-label badge bg-dark text-white rounded-pill px-2 py-1 me-2" for="techniek">Techniek en technologie</label>
             </div>
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="related_colleges" value="Zorg en Welzijn"
@@ -57,8 +55,11 @@
             <% projects.forEach(project => { %>
             <div class="card project-card position-relative">
                 <div class="pill-container d-flex position-absolute top-0 start-0 m-2">
-                    <div class="pill bg-primary badge badge-primary rounded me-1">ICT</div>
-                    <!-- <div class="pill bg-danger badge badge-primary rounded me-1">Techniek</div> -->
+                    <% project.project_college.forEach(projectCollege => { %>
+                        <div class="pill bg-<%= projectCollege.colleges.college_name %> badge badge-primary rounded me-1">
+                            <%= projectCollege.colleges.college_name %>
+                        </div>
+                    <% }); %>
                 </div>
 
                 <h2 class="mt-2"><%= project.project_name %></h2>

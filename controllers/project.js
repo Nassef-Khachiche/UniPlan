@@ -42,11 +42,14 @@ exports.create_project = async (req, res) => {
 
         // List of selected colleges
         const selectedColleges = [];
+
         if (ict) selectedColleges.push('ict');
         if (houtwerk) selectedColleges.push('houtwerk');
         if (buisness) selectedColleges.push('business');
         if (techniek) selectedColleges.push('techniek');
         if (zorg) selectedColleges.push('zorg');
+
+        console.log(selectedColleges);
 
         // Ensure selected colleges exist in the database
         const collegeRecords = await Promise.all(
@@ -176,6 +179,23 @@ exports.view_project = async (req, res) => {
             },
         });
 
+
+        const related_colleges = await prisma.project_college.findMany({
+            where: {
+                project_id: projectId
+            }
+        });
+
+        const colleges = await Promise.all(
+            related_colleges.map(async (college) => {
+                return prisma.colleges.findMany({
+                    where: { college_id: college.id },
+                });
+            })
+        );
+
+        console.log(colleges[0]);
+
         // Check if the project exists
         if (!project) {
             res.status(404).json({
@@ -192,7 +212,7 @@ exports.view_project = async (req, res) => {
             return;
         }
 
-        res.render('project', { project: project, members: users })
+        res.render('project', { project: project, members: users, colleges: colleges[0] })
 
     } catch (error) {
         console.error(error);
@@ -216,13 +236,29 @@ exports.all_projects = async (req, res) => {
                         { project_name: { contains: searchQuery, mode: 'insensitive' } },
                         { project_bio: { contains: searchQuery, mode: 'insensitive' } }
                     ]
+                },
+                include: {
+                    project_college: {
+                        include: {
+                            colleges: true
+                        }
+                    }
                 }
             });
         } else {
             // Otherwise, retrieve all projects
-            projects = await prisma.projects.findMany();
+            projects = await prisma.projects.findMany({
+                include: {
+                    project_college: {
+                        include: {
+                            colleges: true
+                        }
+                    }
+                }
+            });
         }
 
+        console.log(projects.project_college);
         // Render the EJS template with projects data
         res.render('projects', { projects: projects, searchQuery: searchQuery });
 
