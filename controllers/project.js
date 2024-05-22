@@ -45,7 +45,7 @@ exports.create_project = async (req, res) => {
 
         if (ict) selectedColleges.push('ict');
         if (houtwerk) selectedColleges.push('houtwerk');
-        if (buisness) selectedColleges.push('business');
+        if (buisness) selectedColleges.push('buisness');
         if (techniek) selectedColleges.push('techniek');
         if (zorg) selectedColleges.push('zorg');
 
@@ -93,7 +93,7 @@ exports.create_project = async (req, res) => {
         await Promise.all(users.map(email => sendEmailNotification(email, project)));
 
         const userList = await prisma.users.findMany();
-        res.render('create-project', { req, users: userList });
+        res.render('create-project', { req: req, users: userList });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -189,12 +189,33 @@ exports.view_project = async (req, res) => {
         const colleges = await Promise.all(
             related_colleges.map(async (college) => {
                 return prisma.colleges.findMany({
-                    where: { college_id: college.id },
+                    where: { college_id: college.college_id },
                 });
             })
         );
 
-        console.log(colleges[0]);
+        const member = await prisma.project_member.findFirst({
+            where: {
+
+                AND: [
+                    {
+                        project_id: projectId,
+                    },
+                    {
+                        user_id: req.session.loggedInUser
+                    },
+                ],
+            },
+        });
+
+        let activeMember;
+
+        if (member) {
+            activeMember = true
+        }
+        else {
+            activeMember = false
+        }
 
         // Check if the project exists
         if (!project) {
@@ -204,15 +225,28 @@ exports.view_project = async (req, res) => {
             return;
         }
 
-        // Check if the logged-in user is the creator of the project
-        if (project.created_by !== req.session.loggedInUser) {
-            res.status(403).json({
-                message: 'Forbidden'
-            });
-            return;
-        }
+        // // Check if the logged-in user is the creator of the project
+        // if (project.created_by !== req.session.loggedInUser) {
+        //     res.status(403).json({
+        //         message: 'Forbidden'
+        //     });
+        //     return;s
+        // }
 
-        res.render('project', { project: project, members: users, colleges: colleges[0] })
+        // find creator of the project
+        const created_by = await prisma.users.findUnique({
+            where: {
+                user_id: project.created_by
+            }
+        });
+
+        res.render('project', { 
+            req: req, project: 
+            project, members: users, 
+            colleges: colleges, 
+            created_by: created_by, 
+            activeMember: activeMember,
+        });
 
     } catch (error) {
         console.error(error);
@@ -258,9 +292,8 @@ exports.all_projects = async (req, res) => {
             });
         }
 
-        console.log(projects.project_college);
         // Render the EJS template with projects data
-        res.render('projects', { projects: projects, searchQuery: searchQuery });
+        res.render('projects', { req: req, projects: projects, searchQuery: searchQuery });
 
     } catch (error) {
         console.error(error);

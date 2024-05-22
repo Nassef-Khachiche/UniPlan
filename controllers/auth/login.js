@@ -25,9 +25,23 @@ exports.login = async (req, res) => {
                     email: true,
                     password: true,
                     firstname: true,
-                    lastname: true
+                    lastname: true,
+                    phone: true,
                 },
         });
+
+        const pfp = await prisma.profilepictures.findFirst({
+            where: {
+                user_id: user.id
+            }
+        });
+
+        if (pfp) {
+            req.session.LoggedInUser_pfp = pfp.image_id;
+        }
+        else {
+            req.session.LoggedInUser_pfp = "999999999";
+        }
 
 
         // if email is wrong
@@ -50,6 +64,9 @@ exports.login = async (req, res) => {
             req.session.loggedInUser = user.user_id;
             req.session.firstname = user.firstname;
             req.session.lastname = user.lastname;
+            req.session.email = user.email;
+            req.session.phone = user.phone;
+
 
             req.session.save();
 

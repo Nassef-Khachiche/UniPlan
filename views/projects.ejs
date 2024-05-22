@@ -20,6 +20,7 @@
             onkeyup="filterProjects(this.value)">
         <div class="wrapper d-sm-flex align-items-centers justify-content-center mb-3">
             <label for="RelatedColleges" class="mx-sm-4"> <b>Filter on related college</b></label>
+            <!-- Filters -->
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="related_colleges" value="ICT" id="ict">
                 <label class="form-check-label badge bg-primary text-white rounded-pill px-2 py-1 me-2"
@@ -32,14 +33,16 @@
                     for="metaal">Metaal- en Houtwerk</label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="related_colleges" value="Techniek en technologie"id="techniek">
-                    <label class="form-check-label badge bg-dark text-white rounded-pill px-2 py-1 me-2" for="techniek">Techniek en technologie</label>
+                <input class="form-check-input" type="checkbox" name="related_colleges" value="Techniek en technologie"
+                    id="techniek">
+                <label class="form-check-label badge bg-dark text-white rounded-pill px-2 py-1 me-2"
+                    for="techniek">Techniek en technologie</label>
             </div>
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="related_colleges" value="Zorg en Welzijn"
                     id="zorg">
-                <label class="form-check-label badge bg-danger text-white rounded-pill px-2 py-1 me-2" for="zorg">Zorg
-                    en Welzijn</label>
+                <label class="form-check-label badge bg-danger text-white rounded-pill px-2 py-1 me-2"
+                    for="zorg">Zorg en Welzijn</label>
             </div>
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="buisness" value="buisness" id="buisness">
@@ -48,34 +51,32 @@
             </div>
         </div>
 
-        <div class="wrapper text-center">
+        <div class="card-grid">
             <% if (!projects || projects.length === 0) { %>
             <p>No projects found.</p>
             <% } else { %>
             <% projects.forEach(project => { %>
-            <div class="card project-card position-relative">
-                <div class="pill-container d-flex position-absolute top-0 start-0 m-2">
-                    <% project.project_college.forEach(projectCollege => { %>
+            <div class="card-column mt-4">
+                <div class="card project-card">
+                    <div class="pill-container d-flex position-absolute top-0 start-0 m-2">
+                        <% project.project_college.forEach(projectCollege => { %>
                         <div class="pill bg-<%= projectCollege.colleges.college_name %> badge badge-primary rounded me-1">
                             <%= projectCollege.colleges.college_name %>
                         </div>
-                    <% }); %>
+                        <% }); %>
+                    </div>
+                    <h2 class="mt-2"><%= project.project_name %></h2>
+                    <p class="project-bio"><%= project.project_bio %></p>
+                    <a href="/project/<%= project.project_id %>">View Project</a>
                 </div>
-
-                <h2 class="mt-2"><%= project.project_name %></h2>
-                <p><%= project.project_bio %></p>
-                <a href="/project/<%= project.project_id %>">View Project</a>
             </div>
             <% }); %>
-
-            <p id="noProjectsFound" class="d-none"> <b>No projects find with current filters.</b> </p>
-
+            <p id="noProjectsFound" class="d-none"> <b>No projects found with current filters.</b> </p>
             <% } %>
         </div>
     </div>
 
     <script src="../public/js/search-projects.js"></script>
-
 </body>
 
 </html>

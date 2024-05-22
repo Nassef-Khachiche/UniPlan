@@ -2,6 +2,8 @@ const { createServer } = require("http");
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const multer = require('multer');
+const path = require('path'); // Import the 'path' module
 
 const port = 8080;
 const app = express();
