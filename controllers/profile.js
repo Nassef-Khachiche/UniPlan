@@ -25,7 +25,7 @@ exports.profile_render = async (req, res) => {
         }
 
         //Data to use in the front end
-        req.session.loggedInUser = user;
+        req.session.loggedInUser = user.user_id;
 
 
         res.render('profile', {

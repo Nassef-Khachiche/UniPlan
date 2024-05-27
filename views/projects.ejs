@@ -56,8 +56,8 @@
             <p>No projects found.</p>
             <% } else { %>
             <% projects.forEach(project => { %>
-            <div class="card-column mt-4">
-                <div class="card project-card">
+            <div class="card-column mt-4 ">
+                <div class="card project-card shadow">
                     <div class="pill-container d-flex position-absolute top-0 start-0 m-2">
                         <% project.project_college.forEach(projectCollege => { %>
                         <div class="pill bg-<%= projectCollege.colleges.college_name %> badge badge-primary rounded me-1">

@@ -16,7 +16,12 @@
         <div class="wrapper m-4">
             <b>Files or Images added.</b>
             <div class="column">
-                <img width="200" src="https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary.svg">
+                <% if (files) { %>
+                    <% files.forEach(file => { %>
+                        <i class="ri-attachment-line"></i><a width="200" href="../uploads/<%= file.file_id %>"><%= file.file_id %></a><br>
+                    <% }); %>
+                <% } %>
+
             </div>
         </div>
         <div class="wrapper m-4">
@@ -44,7 +49,7 @@
             <!-- members -->
             <% members.forEach(member => { %>
             <% if (member.firstname != created_by.firstname) { %>
-            <p><img width="25px" class="rounded-circle" src="<%req.session.LoggedInUser_pfp%>"><%- " " + member.firstname + " " + member.lastname %></p>
+            <p><img width="25px" class="rounded-circle" src="../uploads/image-999999999.jpg"><%- " " + member.firstname + " " + member.lastname %></p>
             <% }; %>
             <% }); %>
 

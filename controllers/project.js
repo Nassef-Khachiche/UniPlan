@@ -1,15 +1,21 @@
-const { prisma } = require("../prisma/connection");
+const {
+    prisma
+} = require("../prisma/connection");
 const nodemailer = require('nodemailer');
 const multer = require('multer');
 const path = require('path');
+const { all } = require("../router");
+let completeFileName = "";
 
 exports.view_cr_project = async (req, res) => {
     if (!req.session.isAuthenticated) {
         res.render('auth/login');
-    }
-    else {
+    } else {
         const users = await prisma.users.findMany();
-        res.render('create-project', { req: req, users: users });
+        res.render('create-project', {
+            req: req,
+            users: users
+        });
     }
 }
 
@@ -20,62 +26,22 @@ const storage = multer.diskStorage({
         cb(null, 'uploads/');
     },
     filename: function (req, file, cb) {
-        let completeFileName = file.fieldname + '-' + Date.now() + path.extname(file.originalname);
+        completeFileName = file.fieldname + '-' + Date.now() + path.extname(file.originalname);
         cb(null, completeFileName);
     }
 });
 
 // Initialize multer upload
-const upload = multer({ storage: storage });
+const upload = multer({
+    storage: storage
+});
 
 // Handle the POST request to create a project
 exports.create_project = async (req, res) => {
     try {
-        // Check if the user is authenticated
-        if (!req.session.isAuthenticated || !req.session.loggedInUser) {
-            res.render('auth/login');
-            return;
-        }
-
-        // Extract project details from the request body
-        const { project_name, project_bio, file, ict, houtwerk, buisness, techniek, zorg } = req.body;
-
-        console.log(file);
-        console.log(file);
-        console.log(file);
-
-
-        // Get the logged-in user's ID
-        const creatorId = req.session.loggedInUser;
-
-        // Check if the creatorId is defined
-        if (!creatorId) {
-            res.status(400).json({ message: 'Invalid creator ID' });
-            return;
-        }
-
-        // List of selected colleges
-        const selectedColleges = [];
-
-        if (ict) selectedColleges.push('ict');
-        if (houtwerk) selectedColleges.push('houtwerk');
-        if (buisness) selectedColleges.push('buisness');
-        if (techniek) selectedColleges.push('techniek');
-        if (zorg) selectedColleges.push('zorg');
-
-        // Ensure selected colleges exist in the database
-        const collegeRecords = await Promise.all(
-            selectedColleges.map(async (college) => {
-                return prisma.colleges.upsert({
-                    where: { college_name: college },
-                    update: {},
-                    create: { college_name: college },
-                });
-            })
-        );
 
         // Handle file upload (actual uploading itself)
-        upload.single('file')(req, res, async (err) => {
+        upload.array('file')(req, res, async (err) => {
             // Error handling
             if (err) {
                 console.error('File upload failed:', err);
@@ -83,6 +49,63 @@ exports.create_project = async (req, res) => {
             }
 
             try {
+
+                // Check if the user is authenticated
+                if (!req.session.isAuthenticated || !req.session.loggedInUser) {
+                    res.render('auth/login');
+                    return;
+                }
+
+                // Extract project details from the request body
+                const {
+                    file,
+                    ict,
+                    houtwerk,
+                    buisness,
+                    techniek,
+                    zorg
+                } = req.body;
+
+                // Get the logged-in user's ID
+                const creatorId = req.session.loggedInUser;
+
+                // Check if the creatorId is defined
+                if (!creatorId) {
+                    res.status(400).json({
+                        message: 'Invalid creator ID'
+                    });
+                    return;
+                }
+
+                // List of selected colleges
+                const selectedColleges = [];
+
+                if (ict) selectedColleges.push('ict');
+                if (houtwerk) selectedColleges.push('houtwerk');
+                if (buisness) selectedColleges.push('buisness');
+                if (techniek) selectedColleges.push('techniek');
+                if (zorg) selectedColleges.push('zorg');
+
+                // Ensure selected colleges exist in the database
+                const collegeRecords = await Promise.all(
+                    selectedColleges.map(async (college) => {
+                        return prisma.colleges.upsert({
+                            where: {
+                                college_name: college
+                            },
+                            update: {},
+                            create: {
+                                college_name: college
+                            },
+                        });
+                    })
+                );
+
+                const {
+                    project_name,
+                    project_bio
+                } = req.body;
+
                 // Create the project with associated users and colleges
                 const project = await prisma.projects.create({
                     data: {
@@ -92,22 +115,26 @@ exports.create_project = async (req, res) => {
                         project_member: {
                             create: req.body.users.map(email => ({
                                 users: {
-                                    connect: { email }
+                                    connect: {
+                                        email
+                                    }
                                 }
                             }))
                         },
                         project_college: {
                             create: collegeRecords.map(college => ({
                                 colleges: {
-                                    connect: { college_id: college.college_id }
+                                    connect: {
+                                        college_id: college.college_id
+                                    }
                                 }
-                            }))
+                            })),
                         },
                         project_files: {
-                            create: {
-                                file_id: file
-                            }
-                        }
+                            create: req.files.map(file => ({
+                                file_id: file.filename
+                            }))
+                        },
                     },
                     include: {
                         project_member: true,
@@ -123,16 +150,23 @@ exports.create_project = async (req, res) => {
                 const userList = await prisma.users.findMany();
 
                 // Render the create-project view
-                res.render('create-project', { req: req, users: userList });
+                res.render('create-project', {
+                    req: req,
+                    users: userList
+                });
 
             } catch (error) {
                 console.error('Error creating project:', error);
-                res.status(500).json({ message: 'Internal Server Error' });
+                res.status(500).json({
+                    message: 'Internal Server Error'
+                });
             }
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({
+            message: 'Internal Server Error'
+        });
     }
 };
 
@@ -141,7 +175,9 @@ async function sendEmailNotification(email, project) {
     try {
         // Retrieve user details
         const user = await prisma.users.findUnique({
-            where: { email: email }
+            where: {
+                email: email
+            }
         });
 
         if (!user) {
@@ -225,7 +261,9 @@ exports.view_project = async (req, res) => {
         const colleges = await Promise.all(
             related_colleges.map(async (college) => {
                 return prisma.colleges.findMany({
-                    where: { college_id: college.college_id },
+                    where: {
+                        college_id: college.college_id
+                    },
                 });
             })
         );
@@ -233,8 +271,7 @@ exports.view_project = async (req, res) => {
         const member = await prisma.project_member.findFirst({
             where: {
 
-                AND: [
-                    {
+                AND: [{
                         project_id: projectId,
                     },
                     {
@@ -248,8 +285,7 @@ exports.view_project = async (req, res) => {
 
         if (member) {
             activeMember = true
-        }
-        else {
+        } else {
             activeMember = false
         }
 
@@ -276,12 +312,22 @@ exports.view_project = async (req, res) => {
             }
         });
 
-        res.render('project', { 
-            req: req, project: 
-            project, members: users, 
-            colleges: colleges, 
-            created_by: created_by, 
+        const files = await prisma.project_files.findMany({
+            where: {
+                project_id: projectId
+            }
+        });
+
+        console.log(files);
+
+        res.render('project', {
+            req: req,
+            project: project,
+            members: users,
+            colleges: colleges,
+            created_by: created_by,
             activeMember: activeMember,
+            files: files,
         });
 
     } catch (error) {
@@ -296,15 +342,26 @@ exports.view_project = async (req, res) => {
 exports.all_projects = async (req, res) => {
     try {
         let projects;
-        const { searchQuery } = req.query;
+        const {
+            searchQuery
+        } = req.query;
 
         if (searchQuery) {
             // If there is a search query, filter projects by project_name or project_bio
             projects = await prisma.projects.findMany({
                 where: {
-                    OR: [
-                        { project_name: { contains: searchQuery, mode: 'insensitive' } },
-                        { project_bio: { contains: searchQuery, mode: 'insensitive' } }
+                    OR: [{
+                            project_name: {
+                                contains: searchQuery,
+                                mode: 'insensitive'
+                            }
+                        },
+                        {
+                            project_bio: {
+                                contains: searchQuery,
+                                mode: 'insensitive'
+                            }
+                        }
                     ]
                 },
                 include: {
@@ -328,11 +385,18 @@ exports.all_projects = async (req, res) => {
             });
         }
 
+
         // Render the EJS template with projects data
-        res.render('projects', { req: req, projects: projects, searchQuery: searchQuery });
+        res.render('projects', {
+            req: req,
+            projects: projects,
+            searchQuery: searchQuery,
+        });
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({
+            message: 'Internal Server Error'
+        });
     }
 };

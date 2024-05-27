@@ -17,7 +17,7 @@
         <div class="row justify-content-center">
             <div class="col-md-6 m-1 p-3 p-sm-5 shadow rounded">
                 <h1 class="mb-4">Create Project</h1>
-                <form id="createProjectForm" action="/create/project" method="post">
+                <form id="createProjectForm" action="/create/project" method="post" enctype="multipart/form-data">
                     <!-- Step 1: Project Details -->
                     <div class="step active" id="step1">
                         <div class="form-group">
@@ -28,7 +28,7 @@
                         <div class="form-group mb-2">
                             <label for="projectBio">Project Bio</label>
                             <textarea class="form-control" id="projectBio" name="project_bio" required></textarea>
-                            <input class="form-control mt-2" type="file" name="file" id="formFile">
+                            <input class="form-control mt-2" type="file" name="file" id="formFile" multiple>
                         </div>
                         <button type="button" class="btn btn-primary mt-4" onclick="nextStep(1)">Next</button>
                     </div>
