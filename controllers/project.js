@@ -1,6 +1,7 @@
-const { log } = require("console");
 const { prisma } = require("../prisma/connection");
 const nodemailer = require('nodemailer');
+const multer = require('multer');
+const path = require('path');
 
 exports.view_cr_project = async (req, res) => {
     if (!req.session.isAuthenticated) {
@@ -12,9 +13,23 @@ exports.view_cr_project = async (req, res) => {
     }
 }
 
-exports.create_project = async (req, res) => {
-    let { project_name, project_bio, users } = req.body;
 
+// Set up multer storage
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        let completeFileName = file.fieldname + '-' + Date.now() + path.extname(file.originalname);
+        cb(null, completeFileName);
+    }
+});
+
+// Initialize multer upload
+const upload = multer({ storage: storage });
+
+// Handle the POST request to create a project
+exports.create_project = async (req, res) => {
     try {
         // Check if the user is authenticated
         if (!req.session.isAuthenticated || !req.session.loggedInUser) {
@@ -23,7 +38,12 @@ exports.create_project = async (req, res) => {
         }
 
         // Extract project details from the request body
-        const { project_name, project_bio, ict, houtwerk, buisness, techniek, zorg } = req.body;
+        const { project_name, project_bio, file, ict, houtwerk, buisness, techniek, zorg } = req.body;
+
+        console.log(file);
+        console.log(file);
+        console.log(file);
+
 
         // Get the logged-in user's ID
         const creatorId = req.session.loggedInUser;
@@ -34,12 +54,6 @@ exports.create_project = async (req, res) => {
             return;
         }
 
-        // Extract selected users from the request body (ensure it is an array)
-        let { users } = req.body;
-        if (!Array.isArray(users)) {
-            users = [];
-        }
-
         // List of selected colleges
         const selectedColleges = [];
 
@@ -48,8 +62,6 @@ exports.create_project = async (req, res) => {
         if (buisness) selectedColleges.push('buisness');
         if (techniek) selectedColleges.push('techniek');
         if (zorg) selectedColleges.push('zorg');
-
-        console.log(selectedColleges);
 
         // Ensure selected colleges exist in the database
         const collegeRecords = await Promise.all(
@@ -62,38 +74,62 @@ exports.create_project = async (req, res) => {
             })
         );
 
-        // Create the project with associated users and colleges
-        const project = await prisma.projects.create({
-            data: {
-                project_name,
-                project_bio,
-                created_by: creatorId,
-                project_member: {
-                    create: users.map(email => ({
-                        users: {
-                            connect: { email }
+        // Handle file upload (actual uploading itself)
+        upload.single('file')(req, res, async (err) => {
+            // Error handling
+            if (err) {
+                console.error('File upload failed:', err);
+                return res.status(400).send('File upload failed.');
+            }
+
+            try {
+                // Create the project with associated users and colleges
+                const project = await prisma.projects.create({
+                    data: {
+                        project_name: project_name,
+                        project_bio: project_bio,
+                        created_by: creatorId,
+                        project_member: {
+                            create: req.body.users.map(email => ({
+                                users: {
+                                    connect: { email }
+                                }
+                            }))
+                        },
+                        project_college: {
+                            create: collegeRecords.map(college => ({
+                                colleges: {
+                                    connect: { college_id: college.college_id }
+                                }
+                            }))
+                        },
+                        project_files: {
+                            create: {
+                                file_id: file
+                            }
                         }
-                    }))
-                },
-                project_college: {
-                    create: collegeRecords.map(college => ({
-                        colleges: {
-                            connect: { college_id: college.college_id }
-                        }
-                    }))
-                }
-            },
-            include: {
-                project_member: true,
-                project_college: true
+                    },
+                    include: {
+                        project_member: true,
+                        project_college: true,
+                        project_files: true
+                    }
+                });
+
+                // Send email notifications
+                // await Promise.all(req.body.users.map(email => sendEmailNotification(email, project)));
+
+                // Fetch all users to pass to the view
+                const userList = await prisma.users.findMany();
+
+                // Render the create-project view
+                res.render('create-project', { req: req, users: userList });
+
+            } catch (error) {
+                console.error('Error creating project:', error);
+                res.status(500).json({ message: 'Internal Server Error' });
             }
         });
-
-        // Send email notifications
-        await Promise.all(users.map(email => sendEmailNotification(email, project)));
-
-        const userList = await prisma.users.findMany();
-        res.render('create-project', { req: req, users: userList });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -202,7 +238,7 @@ exports.view_project = async (req, res) => {
                         project_id: projectId,
                     },
                     {
-                        user_id: req.session.loggedInUser
+                        user_id: req.session.loggedInUser.user_id
                     },
                 ],
             },
