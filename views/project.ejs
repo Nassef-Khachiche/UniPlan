@@ -10,22 +10,26 @@
 <body>
     <%- include('../public/partials/navbar'); %>
 
-    <div class="contianer ">
+    <div class="contianer">
         <div class="shadow"></div>
         <h1 class="m-4"> <%= project.project_name %></h1>
         <div class="wrapper m-4">
             <b>Files or Images added.</b>
             <div class="column">
                 <% if (files) { %>
-                    <% files.forEach(file => { %>
-                        <i class="ri-attachment-line"></i><a width="200" href="../uploads/<%= file.file_id %>"><%= file.file_id %></a><br>
-                    <% }); %>
+                <% files.forEach(file => { %>
+                <i class="ri-attachment-line"></i><a width="200"
+                    href="../uploads/<%= file.file_id %>"><%= file.file_id %></a><br>
+                <% }); %>
                 <% } %>
 
             </div>
         </div>
         <div class="wrapper m-4">
+
+            <b>Biography</b>
             <p><%= project.project_bio %></p>
+
 
             <% if (colleges) { %>
             <div class="wrapper d-flex">
@@ -49,7 +53,8 @@
             <!-- members -->
             <% members.forEach(member => { %>
             <% if (member.firstname != created_by.firstname) { %>
-            <p><img width="25px" class="rounded-circle" src="../uploads/image-999999999.jpg"><%- " " + member.firstname + " " + member.lastname %></p>
+            <p><img width="25px" class="rounded-circle"
+                    src="../uploads/image-999999999.jpg"><%- " " + member.firstname + " " + member.lastname %></p>
             <% }; %>
             <% }); %>
 
@@ -78,37 +83,38 @@
 </html>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Project settings</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form id="project-settings-form">
-            <div class="form-group">
-              <label for="project-name">Project Name</label>
-              <input type="text" class="form-control" id="project-name" placeholder="Enter project name">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Project settings</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="form-group">
-              <label for="project-users">Project Members</label>
-              <select multiple class="form-control" id="project-users">
-                <!-- Dynamically add user options here -->
-              </select>
-              <small class="form-text text-muted">Select or remove users from the project.</small>
+            <div class="modal-body">
+                <form id="project-settings-form">
+                    <div class="form-group">
+                        <label for="project-name">Project Name</label>
+                        <input type="text" class="form-control" id="project-name" placeholder="Enter project name">
+                    </div>
+                    <div class="form-group">
+                        <label for="project-users">Project Members</label>
+                        <select multiple class="form-control" id="project-users">
+                            <!-- Dynamically add user options here -->
+                        </select>
+                        <small class="form-text text-muted">Select or remove users from the project.</small>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success" id="add-user">Add User</button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-              <button type="button" class="btn btn-success" id="add-user">Add User</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="save-changes">Save changes</button>
             </div>
-          </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" id="save-changes">Save changes</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
