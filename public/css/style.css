@@ -129,6 +129,10 @@ body {
     justify-content: center;
 }
 
+.card-column {
+    flex: 0!important;
+}
+
 .white-spacer {
     height: 400px;
     display: flex;

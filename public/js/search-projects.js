@@ -1,6 +1,6 @@
 function filterProjects(filter) {
     filter = filter.toUpperCase();
-    const projectCards = document.querySelectorAll('.project-card');
+    const projectCards = document.querySelectorAll('.card-column');
     const noProjectsFound = document.getElementById('noProjectsFound');
     
     projectCards.forEach(card => {
