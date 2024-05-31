@@ -100,9 +100,18 @@
                         <input type="text" class="form-control" id="project-name" placeholder="Enter project name">
                     </div>
                     <div class="form-group">
+                        <label for="project-name">Project Biography</label>
+                        <textarea class="form-control" id="project-name" placeholder="Enter project bio"></textarea>
+                    </div>
+                    <div class="form-group">
                         <label for="project-users">Project Members</label>
                         <select multiple class="form-control" id="project-users">
-                            <!-- Dynamically add user options here -->
+                            <% members.forEach(member => { %>
+                                <option value="<%- " " + member.firstname + " " + member.lastname %></option>">
+                                    <img width="25px" class="rounded-circle" src="../uploads/image-999999999.jpg">
+                                    <%- " " + member.firstname + " " + member.lastname %>
+                                </option>
+                            <% }); %>
                         </select>
                         <small class="form-text text-muted">Select or remove users from the project.</small>
                     </div>

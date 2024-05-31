@@ -52,7 +52,7 @@
           </li>
         </ul>
         <li class="nav-item me-5 mt-2 mt-sm-0" style="list-style: none; color: gray; font-weight: bolder;">
-          <a href="/profile" class="nav-link p-0"><%- req.session.firstname + " " + req.session.lastname %> <img width="30" height="30" src="../uploads/image-999999999.jpg" class="rounded-circle border border-dark border-3" alt=""> </a>
+          <a href="/profile" class="nav-link p-0 d-flex me-2"> <b class="mt-1"><%- req.session.firstname + " " + req.session.lastname %></b> <div class="rounded-circle ms-2" style='height: 30px; width: 30px; background-image: url("../uploads/image-<%- req.session.LoggedInUser_pfp %>.jpg"); background-size: cover; background-position: center;'></div> </a>
         </li>
       </div>
     </div>

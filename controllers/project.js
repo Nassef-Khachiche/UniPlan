@@ -106,6 +106,8 @@ exports.create_project = async (req, res) => {
                     project_bio
                 } = req.body;
 
+                req.body.users.push(req.session.email);
+
                 // Create the project with associated users and colleges
                 const project = await prisma.projects.create({
                     data: {
@@ -275,7 +277,7 @@ exports.view_project = async (req, res) => {
                         project_id: projectId,
                     },
                     {
-                        user_id: req.session.loggedInUser.user_id
+                        user_id: req.session.loggedInUser
                     },
                 ],
             },
@@ -283,10 +285,12 @@ exports.view_project = async (req, res) => {
 
         let activeMember;
 
-        if (member) {
-            activeMember = true
+        console.log(member,req.session.loggedInUser);
+
+        if (member != null) {
+            activeMember = false;
         } else {
-            activeMember = false
+            activeMember = true;
         }
 
         // Check if the project exists
@@ -317,8 +321,6 @@ exports.view_project = async (req, res) => {
                 project_id: projectId
             }
         });
-
-        console.log(files);
 
         res.render('project', {
             req: req,

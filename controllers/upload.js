@@ -24,15 +24,16 @@ exports.upload = async (req, res) => {
 	let { body, session } = req;
 	const user = await prisma.profilepictures.findFirst({
 		where: {
-			user_id: String(req.session.LoggedInId),
+			user_id: String(req.session.loggedInUser),
 		}
 	});
+
 
 	// if User does not have a profile picture create one
 	if (!user) {
 		const image = await prisma.profilepictures.create({
 			data: {
-				user_id: String(req.session.LoggedInId),
+				user_id: String(req.session.loggedInUser),
 				image_id: String(imageid),
 			}
 		});

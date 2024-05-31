@@ -37,6 +37,9 @@ model project_member {
   user_id    Int
   users      users    @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "project_member_ibfk_1")
   projects   projects @relation(fields: [project_id], references: [project_id], onUpdate: Restrict, map: "project_member_ibfk_2")
+
+  @@index([user_id], map: "project_member_ibfk_1")
+  @@index([project_id], map: "project_member_ibfk_2")
 }
 
 model colleges {

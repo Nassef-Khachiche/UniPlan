@@ -17,8 +17,6 @@ exports.register = async (req, res) =>
     } = req.body;
 
 
-    console.log(req.body);
-
     password = "";
     // Password match checks
     if (password1 == password2) {

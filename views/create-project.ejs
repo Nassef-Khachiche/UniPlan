@@ -76,10 +76,13 @@
                             <label for="addUser" class="mt-2">Add user(s)</label>
                             <input type="text" class="form-control mt-1" id="userSearchInput" placeholder="Search..." onkeyup="filterUsers()">
 
-                            <select multiple class="dropdown-content form-control mt-1 limited" id="myDropdown" size="5" onchange="selectUser(this)">
+                            <select multiple class="dropdown-content form-control mt-1 limited" id="myDropdown" size="5" onchange="selectUser(this)">  
                                 <% users.forEach(user => { %>
-                                <option value="<%= user.email %>"><%= user.lastname + ", " + user.firstname %></option>
+                                    <% if (user.email != req.session.email) { %>  
+                                        <option value="<%= user.email %>"><%= user.lastname + ", " + user.firstname %></option>
+                                    <% } %>
                                 <% }); %>
+                            
                             </select>
                         </div>
 

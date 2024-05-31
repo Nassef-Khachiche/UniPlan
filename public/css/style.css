@@ -145,6 +145,13 @@ body {
     background-color: #000000;
 }
 
+.black-footer a{
+    border-radius: 5px;
+    padding: 0px;
+    background-color: var(--roc-green);
+    color: var(--roc-yellow);
+}
+
 .dashboard-container {
     text-align: center;
     background-color: #fff;
