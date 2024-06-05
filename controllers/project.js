@@ -93,7 +93,7 @@ exports.create_project = async (req, res) => {
                     })
                 );
 
-                const { project_name, project_bio, bannerFileName } = req.body;
+                const { project_name, project_bio } = req.body;
                 req.body.users.push(req.session.email);
 
                 const project = await prisma.projects.create({
@@ -210,7 +210,12 @@ exports.view_project = async (req, res) => {
         });
 
 
+
         let memberArray = [];
+
+        // Add creator as a member
+        memberArray.push(project.created_by);
+
         members.forEach(member => {
             memberArray.push(member.user_id);
         });
@@ -258,10 +263,10 @@ exports.view_project = async (req, res) => {
 
         let activeMember;
 
-        if (member != null) {
-            activeMember = false;
-        } else {
+        if (member) {
             activeMember = true;
+        } else {
+            activeMember = false;
         }
 
         // Check if the project exists

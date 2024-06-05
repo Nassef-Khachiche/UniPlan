@@ -19,8 +19,8 @@
         <input type="text" class="search-box form-control w-50 mb-4" placeholder="Search by name or bio"
             onkeyup="filterProjects(this.value)">
 
-        <div class="wrapper d-sm-flex align-items-centers justify-content-center mb-3">
-            <label for="RelatedColleges" class="mx-sm-4"> <b>Filter on related college</b></label>
+        <label for="RelatedColleges" class="mx-sm-4"> <b>Filter on related college</b></label>
+        <div class="wrapper d-sm-flex align-items-center justify-content-center mb-3">
             <!-- Filters -->
             <div class="form-check ms-4">
                 <input class="form-check-input" type="checkbox" name="related_colleges" value="ICT" id="ict">
@@ -56,6 +56,14 @@
                     for="workingOn">Working on</label>
             </div>
         </div>
+        
+        <div class="form-check ms-4">
+            <label for="sortDate" class="mx-sm-4"> <b>Sort by Date</b></label>
+            <select id="sortDate" class="form-select" onchange="sortProjectsByDate(this.value)">
+                <option value="newToOld">New to Old</option>
+                <option value="oldToNew">Old to New</option>
+            </select>
+        </div>
 
         <div id="project-container" class="card-grid mb-4"></div>
         <p id="noProjectsFound" class="d-none"> <b>No projects found with current filters.</b> </p>
@@ -75,6 +83,7 @@
 
     <script src="../public/js/search-projects.js"></script>
     <script src="../public/js/pagination.js"></script>
+    <script src="../public/js/sort-projects.js"></script>
 </body>
 
 </html>
