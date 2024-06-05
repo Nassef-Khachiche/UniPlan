@@ -10,17 +10,27 @@
 <body>
     <%- include('../public/partials/navbar'); %>
 
-    <div class="contianer">
+    <div class="container" style="position: relative;">
         <div class="shadow"></div>
         <h1 class="m-4"> <%= project.project_name %></h1>
         <p class="m-4"><b>Start date: <%= projectDate %></b></p>
         <p class="m-4"><b>End date: <%= endDate %></b></p>
 
+        <!-- Project Status Dropdown -->
+        <div class="status-dropdown dropdown d-flex mt-0">
+            <label for="project-status">Project Status: </label>
+            <select class="form-control"  id="project-status" name="project-status">
+                <option value="new">New</option>
+                <option value="in-progress">In progress</option>
+                <option value="on-hold">On Hold</option>
+                <option value="finished">Finished</option>
+            </select>
+        </div>
 
         <% if (project.banner) { %>
             <img class="m-4" src="../uploads/<%= project.banner %>" alt="Project Banner" width="500">
         <% } %>
-        
+
         <div class="wrapper m-4">
             <b>Files or Images added.</b>
             <div class="column">
@@ -30,15 +40,12 @@
                     href="../uploads/<%= file.file_id %>"><%= file.file_id %></a><br>
                 <% }); %>
                 <% } %>
-
             </div>
         </div>
         <div class="wrapper m-4">
-
             <hr>
             <b>Biography</b>
             <p><%= project.project_bio %></p>
-
 
             <% if (colleges) { %>
             <div class="wrapper d-flex">
@@ -79,60 +86,58 @@
 
             <% if (activeMember) { %>
             <!-- if you are already in the group -->
-            <button class="submit-button bg-danger">Leave</button>
+            <button class="submit-button bg-danger mb-3">Leave</button>
             <% } else { %>
             <!-- if you are not already in the group -->
-            <button class="submit-button bg-success">Request to join</button>
+            <button class="submit-button bg-success mb-3">Request to join</button>
             <% } %>
         </div>
-
     </div>
 
-</body>
-
-</html>
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Project settings</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="project-settings-form">
-                    <div class="form-group">
-                        <label for="project-name">Project Name</label>
-                        <input type="text" class="form-control" id="project-name" placeholder="Enter project name">
-                    </div>
-                    <div class="form-group">
-                        <label for="project-name">Project Biography</label>
-                        <textarea class="form-control" id="project-name" placeholder="Enter project bio"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="project-users">Project Members</label>
-                        <select multiple class="form-control" id="project-users">
-                            <% users.forEach(user => { %>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Project settings</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="project-settings-form">
+                        <div class="form-group">
+                            <label for="project-name">Project Name</label>
+                            <input type="text" class="form-control" id="project-name" placeholder="Enter project name">
+                        </div>
+                        <div class="form-group">
+                            <label for="project-name">Project Biography</label>
+                            <textarea class="form-control" id="project-name" placeholder="Enter project bio"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="project-users">Project Members</label>
+                            <select multiple class="form-control" id="project-users">
+                                <% users.forEach(user => { %>
                                 <option value="<%- " " + user.firstname + " " + user.lastname %>">
                                     <%- user.firstname + " " + user.lastname %>
                                 </option>
-                            <% }); %>
-                        </select>
-                        <small class="form-text text-muted">Select or remove users from the project.</small>
-                    </div>
-                    <div class="form-group">
-                        <button type="button" class="btn btn-success" id="add-user">Add User</button>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="save-changes">Save changes</button>
+                                <% }); %>
+                            </select>
+                            <small class="form-text text-muted">Select or remove users from the project.</small>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-success" id="add-user">Add User</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="save-changes">Save changes</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</body>
+
+</html>

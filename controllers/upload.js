@@ -22,49 +22,57 @@ const upload = multer({
 exports.upload = async (req, res) => {
 
 	let { body, session } = req;
-	const user = await prisma.profilepictures.findFirst({
-		where: {
-			user_id: String(req.session.loggedInUser),
-		}
-	});
 
-
-	// if User does not have a profile picture create one
-	if (user) {
-		const image = await prisma.profilepictures.create({
-			data: {
+	try {
+		const user = await prisma.profilepictures.findFirst({
+			where: {
 				user_id: String(req.session.loggedInUser),
-				image_id: String(imageid),
 			}
 		});
-
-		// critical: Need to update profile picture in order to update right after
-		req.session.LoggedInUser_pfp = imageid
-	}
-	else {
-		// Else update the user if he already got one record in the DB
-		const update_user = await prisma.profilepictures.update({
-			where: {
-			  id: user.id,
-			},
-			data: {
-				image_id: String(imageid)
-			},
-		})
-
-		// critical: Need to update profile picture in order to update right after
-		req.session.LoggedInUser_pfp = imageid
-	}
-
-	// Handle file upload (actual uploading itself)
-	upload.single('image')(req, res, (err) => {
-
-		// Error handling
-		if (err) {
-			return res.status(400).send('File upload failed.');
+	
+	
+		// if User does not have a profile picture create one
+		if (!user) {
+			const image = await prisma.profilepictures.create({
+				data: {
+					user_id: String(req.session.loggedInUser),
+					image_id: String(imageid),
+				}
+			});
+	
+			// critical: Need to update profile picture in order to update right after
+			req.session.LoggedInUser_pfp = imageid
 		}
+		else {
+			// Else update the user if he already got one record in the DB
+			const update_user = await prisma.profilepictures.update({
+				where: {
+				  id: req.session.loggedInUser,
+				},
+				data: {
+					image_id: String(imageid)
+				},
+			})
+	
+			// critical: Need to update profile picture in order to update right after
+			req.session.LoggedInUser_pfp = imageid
+		}
+	
+		// Handle file upload (actual uploading itself)
+		upload.single('image')(req, res, (err) => {
+	
+			// Error handling
+			if (err) {
+				return res.status(400).send('File upload failed.');
+			}
+	
+			// Go back to profile
+			res.render('profile', {req: req});
+		});
+	} catch (error) {
+		res.status(400).json({message: "Something went wrong whilst uploading a profile picture",
+			error: error
+		})
+	}
 
-		// Go back to profile
-		res.render('profile', {req: req});
-	});
 };

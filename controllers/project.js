@@ -316,6 +316,68 @@ exports.view_project = async (req, res) => {
 }
 
 
+exports.all_user_projects = async (req, res) => {
+    try {
+        let projects;
+        const {
+            searchQuery
+        } = req.query;
+
+        if (searchQuery) {
+            // If there is a search query, filter projects by project_name or project_bio
+            projects = await prisma.projects.findMany({
+                where: {
+                    OR: [{
+                            project_name: {
+                                contains: searchQuery,
+                                mode: 'insensitive'
+                            }
+                        },
+                        {
+                            project_bio: {
+                                contains: searchQuery,
+                                mode: 'insensitive'
+                            }
+                        }
+                    ]
+                },
+                include: {
+                    project_college: {
+                        include: {
+                            colleges: true
+                        }
+                    }
+                }
+            });
+        } else {
+            // Otherwise, retrieve all projects
+            projects = await prisma.projects.findMany({
+                include: {
+                    project_college: {
+                        include: {
+                            colleges: true
+                        }
+                    }
+                }
+            });
+        }
+
+
+        // Render the EJS template with projects data
+        res.render('user-projects', {
+            req: req,
+            projects: projects,
+            searchQuery: searchQuery,
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'Internal Server Error'
+        });
+    }
+};
+
 exports.all_projects = async (req, res) => {
     try {
         let projects;

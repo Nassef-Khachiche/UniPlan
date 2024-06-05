@@ -25,7 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                 ${project.project_college.map(pc => `<div class="pill bg-${pc.colleges.college_name} badge badge-primary rounded me-1">${pc.colleges.college_name}</div>`).join('')}
                             </div>
                             <h2 class="mt-2">${project.project_name}</h2>
-                            <p class="project-bio">${project.project_bio}</p>
+                            <p class="project-bio mb-0">${project.project_bio}</p>
+                            <div class=" d-flex justify-content-center align-items-center">
+                            <label class="form-check-label badge bg-secondary text-white rounded-pill px-2 py-1 w-50" for="endDate">${project.end_date.slice(0,10)}</label>
+                            </div>
                             <a href="/project/${project.project_id}">View Project</a>
                         </div>
                     </div>

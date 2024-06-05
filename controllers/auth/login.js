@@ -15,11 +15,11 @@ exports.login = async (req, res) => {
     try {
 
         // HARD RESET
-        await prisma.project_member.deleteMany();
-        await prisma.project_files.deleteMany();
-        await prisma.project_college.deleteMany();
-        await prisma.projects.deleteMany();
-        await prisma.profilepictures.deleteMany();
+        // await prisma.project_member.deleteMany();
+        // await prisma.project_files.deleteMany();
+        // await prisma.project_college.deleteMany();
+        // await prisma.projects.deleteMany();
+        // await prisma.profilepictures.deleteMany();
         
         /* check if password and email are in database > let them in | else give a message saying something went wrong */
         const user = await prisma.users.findUnique({
