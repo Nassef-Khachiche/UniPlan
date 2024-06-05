@@ -6,6 +6,30 @@ const multer = require('multer');
 const path = require('path');
 const { all } = require("../router");
 let completeFileName = "";
+let bannerFileName = "";
+
+
+// setup multer
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        if (file.fieldname === 'banner') {
+            bannerFileName = file.fieldname + '-' + Date.now() + path.extname(file.originalname);
+            cb(null, bannerFileName);
+        } else {
+            completeFileName = file.fieldname + '-' + Date.now() + path.extname(file.originalname);
+            cb(null, completeFileName);
+        }
+    }
+});
+
+
+//initialize upload for multer
+const upload = multer({
+    storage: storage
+});
 
 exports.view_cr_project = async (req, res) => {
     if (!req.session.isAuthenticated) {
@@ -19,65 +43,38 @@ exports.view_cr_project = async (req, res) => {
     }
 }
 
-
-// Set up multer storage
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/');
-    },
-    filename: function (req, file, cb) {
-        completeFileName = file.fieldname + '-' + Date.now() + path.extname(file.originalname);
-        cb(null, completeFileName);
-    }
-});
-
-// Initialize multer upload
-const upload = multer({
-    storage: storage
-});
-
 // Handle the POST request to create a project
 exports.create_project = async (req, res) => {
     try {
-
-        // Handle file upload (actual uploading itself)
-        upload.array('file')(req, res, async (err) => {
-            // Error handling
+        upload.fields([{ name: 'file' }, { name: 'banner', maxCount: 1 }])(req, res, async (err) => {
             if (err) {
                 console.error('File upload failed:', err);
                 return res.status(400).send('File upload failed.');
             }
 
             try {
-
-                // Check if the user is authenticated
                 if (!req.session.isAuthenticated || !req.session.loggedInUser) {
                     res.render('auth/login');
                     return;
                 }
 
-                // Extract project details from the request body
                 const {
                     file,
                     ict,
                     houtwerk,
                     buisness,
                     techniek,
-                    zorg
+                    zorg,
+                    end_date // Get end_date from the request body
                 } = req.body;
 
-                // Get the logged-in user's ID
                 const creatorId = req.session.loggedInUser;
 
-                // Check if the creatorId is defined
                 if (!creatorId) {
-                    res.status(400).json({
-                        message: 'Invalid creator ID'
-                    });
+                    res.status(400).json({ message: 'Invalid creator ID' });
                     return;
                 }
 
-                // List of selected colleges
                 const selectedColleges = [];
 
                 if (ict) selectedColleges.push('ict');
@@ -86,54 +83,38 @@ exports.create_project = async (req, res) => {
                 if (techniek) selectedColleges.push('techniek');
                 if (zorg) selectedColleges.push('zorg');
 
-                // Ensure selected colleges exist in the database
                 const collegeRecords = await Promise.all(
                     selectedColleges.map(async (college) => {
                         return prisma.colleges.upsert({
-                            where: {
-                                college_name: college
-                            },
+                            where: { college_name: college },
                             update: {},
-                            create: {
-                                college_name: college
-                            },
+                            create: { college_name: college },
                         });
                     })
                 );
 
-                const {
-                    project_name,
-                    project_bio
-                } = req.body;
-
+                const { project_name, project_bio, bannerFileName } = req.body;
                 req.body.users.push(req.session.email);
 
-                // Create the project with associated users and colleges
                 const project = await prisma.projects.create({
                     data: {
                         project_name: project_name,
                         project_bio: project_bio,
                         created_by: creatorId,
+                        end_date: end_date ? new Date(end_date) : null, // Handle end_date
+                        banner: bannerFileName, // Save the banner filename
                         project_member: {
                             create: req.body.users.map(email => ({
-                                users: {
-                                    connect: {
-                                        email
-                                    }
-                                }
+                                users: { connect: { email } }
                             }))
                         },
                         project_college: {
                             create: collegeRecords.map(college => ({
-                                colleges: {
-                                    connect: {
-                                        college_id: college.college_id
-                                    }
-                                }
+                                colleges: { connect: { college_id: college.college_id } }
                             })),
                         },
                         project_files: {
-                            create: req.files.map(file => ({
+                            create: req.files['file'].map(file => ({
                                 file_id: file.filename
                             }))
                         },
@@ -145,13 +126,7 @@ exports.create_project = async (req, res) => {
                     }
                 });
 
-                // Send email notifications
-                // await Promise.all(req.body.users.map(email => sendEmailNotification(email, project)));
-
-                // Fetch all users to pass to the view
                 const userList = await prisma.users.findMany();
-
-                // Render the create-project view
                 res.render('create-project', {
                     req: req,
                     users: userList
@@ -159,16 +134,12 @@ exports.create_project = async (req, res) => {
 
             } catch (error) {
                 console.error('Error creating project:', error);
-                res.status(500).json({
-                    message: 'Internal Server Error'
-                });
+                res.status(500).json({ message: 'Internal Server Error' });
             }
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({
-            message: 'Internal Server Error'
-        });
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 };
 
@@ -283,9 +254,9 @@ exports.view_project = async (req, res) => {
             },
         });
 
-        let activeMember;
+        const allUsers = await prisma.users.findMany();
 
-        console.log(member,req.session.loggedInUser);
+        let activeMember;
 
         if (member != null) {
             activeMember = false;
@@ -301,14 +272,6 @@ exports.view_project = async (req, res) => {
             return;
         }
 
-        // // Check if the logged-in user is the creator of the project
-        // if (project.created_by !== req.session.loggedInUser) {
-        //     res.status(403).json({
-        //         message: 'Forbidden'
-        //     });
-        //     return;s
-        // }
-
         // find creator of the project
         const created_by = await prisma.users.findUnique({
             where: {
@@ -322,6 +285,10 @@ exports.view_project = async (req, res) => {
             }
         });
 
+        //formating date
+        let projectCreatedAt = project.created_at.toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}) ;
+        let projectEndAt = project.end_date.toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}) ;
+
         res.render('project', {
             req: req,
             project: project,
@@ -329,6 +296,9 @@ exports.view_project = async (req, res) => {
             colleges: colleges,
             created_by: created_by,
             activeMember: activeMember,
+            projectDate: projectCreatedAt,
+            endDate: projectEndAt,
+            users: allUsers,
             files: files,
         });
 

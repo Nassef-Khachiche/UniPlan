@@ -24,11 +24,19 @@
                             <label for="projectName">Project Name</label>
                             <input type="text" class="form-control" id="projectName" name="project_name" required>
                         </div>
-
+                    
                         <div class="form-group mb-2">
                             <label for="projectBio">Project Bio</label>
                             <textarea class="form-control" id="projectBio" name="project_bio" required></textarea>
-                            <input class="form-control mt-2" type="file" name="file" id="formFile" multiple>
+                            
+                            <label for="formFile">Additional Files</label>
+                            <input class="form-control" type="file" name="file" id="formFile" multiple>
+                        
+                            <label for="formBanner">Add Banner</label>
+                            <input class="form-control" type="file" name="banner" id="formBanner">
+                            
+                            <label for="endDate">End Date</label>
+                            <input type="date" class="form-control" id="endDate" name="end_date">
                         </div>
                         <button type="button" class="btn btn-primary mt-4" onclick="nextStep(1)">Next</button>
                     </div>
