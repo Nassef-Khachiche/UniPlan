@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UniPlan ● projects</title>
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -19,11 +21,11 @@
         <!-- Project Status Dropdown -->
         <div class="status-dropdown dropdown d-flex mt-0">
             <label for="project-status">Project Status: </label>
-            <select class="form-control"  id="project-status" name="project-status">
-                <option value="new">New</option>
-                <option value="in-progress">In progress</option>
-                <option value="on-hold">On Hold</option>
-                <option value="finished">Finished</option>
+            <select class="form-control" id="project-status" name="project-status" data-project-id="<%= project.project_id %>">
+                <option value="new" <%= project.status === 'new' ? 'selected' : '' %>>New</option>
+                <option value="in-progress" <%= project.status === 'in-progress' ? 'selected' : '' %>>In progress</option>
+                <option value="on-hold" <%= project.status === 'on-hold' ? 'selected' : '' %>>On Hold</option>
+                <option value="finished" <%= project.status === 'finished' ? 'selected' : '' %>>Finished</option>
             </select>
         </div>
 
@@ -96,7 +98,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+        aria-hidden="true"> 
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -138,6 +140,7 @@
             </div>
         </div>
     </div>
+    <script src="../public/js/update-project-status.js" ></script>
 </body>
 
 </html>

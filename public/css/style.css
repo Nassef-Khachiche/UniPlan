@@ -301,6 +301,14 @@ main button:hover {
     right: 20px;
 }
 
+.project-card:hover label {
+    color:black!important;
+}
+
+.wizard {
+    height: 550px;
+}
+
 
 /* Media Query for screens smaller than 900 pixels */
 @media (max-width: 900px) {
