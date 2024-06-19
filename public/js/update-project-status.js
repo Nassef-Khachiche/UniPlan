@@ -1,5 +1,5 @@
-$(document).ready(function() {
-    $('#project-status').change(function() {
+$(document).ready(function () {
+    $('#project-status').change(function () {
         var projectId = $(this).data('project-id');
         var newStatus = $(this).val();
 
@@ -11,10 +11,10 @@ $(document).ready(function() {
                 projectId: projectId,
                 status: newStatus
             }),
-            success: function(response) {
+            success: function (response) {
                 alert('Project status updated successfully!');
             },
-            error: function(err) {
+            error: function (err) {
                 console.error('Error updating project status:', err);
                 alert('Failed to update project status.');
             }

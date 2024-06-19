@@ -101,30 +101,37 @@ exports.create_project = async (req, res) => {
                         project_name: project_name,
                         project_bio: project_bio,
                         created_by: creatorId,
+                        banner: req.files['banner'] ? req.files['banner'][0].filename : null, // Save the banner filename
                         end_date: end_date ? new Date(end_date) : null, // Handle end_date
-                        banner: bannerFileName, // Save the banner filename
+                        status: "new",
                         project_member: {
                             create: req.body.users.map(email => ({
                                 users: { connect: { email } }
                             }))
                         },
-                        project_college: {
-                            create: collegeRecords.map(college => ({
-                                colleges: { connect: { college_id: college.college_id } }
-                            })),
-                        },
                         project_files: {
                             create: req.files['file'].map(file => ({
                                 file_id: file.filename
                             }))
-                        },
+                        }
                     },
                     include: {
                         project_member: true,
-                        project_college: true,
                         project_files: true
                     }
                 });
+
+                // Create the project_college entries separately
+                await Promise.all(
+                    collegeRecords.map(async (college) => {
+                        await prisma.project_college.create({
+                            data: {
+                                project_id: project.project_id,
+                                college_id: college.college_id
+                            }
+                        });
+                    })
+                );
 
                 const userList = await prisma.users.findMany();
                 res.render('create-project', {
@@ -142,6 +149,7 @@ exports.create_project = async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
 
 // Function to send email notification
 async function sendEmailNotification(email, project) {
@@ -339,7 +347,7 @@ exports.all_user_projects = async (req, res) => {
         });
 
         // Render the EJS template with projects data
-        res.render('projects', {
+        res.render('user-projects', {
             req: req,
             projects: projects,
         });

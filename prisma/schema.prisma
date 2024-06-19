@@ -13,12 +13,12 @@ model projects {
   project_name    String            @db.VarChar(255)
   project_bio     String            @db.Text
   created_at      DateTime          @default(now()) @db.Date
-  end_date        DateTime?         @db.Date
   banner          String?           @db.VarChar(255)
+  status          String            @default("new") @db.VarChar(30)
+  end_date        DateTime?         @db.Date
   project_college project_college[]
   project_files   project_files[]
   project_member  project_member[]
-  creator         users             @relation(fields: [created_by], references: [user_id], onUpdate: Restrict, map: "projects_ibfk_1")
 }
 
 model users {
@@ -30,7 +30,6 @@ model users {
   password       String           @db.VarChar(255)
   created_at     DateTime         @default(now()) @db.Date
   project_member project_member[]
-  projects       projects[]
 }
 
 model project_member {

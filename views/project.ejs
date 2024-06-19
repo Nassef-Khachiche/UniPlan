@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UniPlan ● projects</title>
     <!-- jquery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
 </head>
 
 <body>
@@ -20,17 +21,19 @@
 
         <!-- Project Status Dropdown -->
         <div class="status-dropdown dropdown d-flex mt-0">
-            <label for="project-status">Project Status: </label>
-            <select class="form-control" id="project-status" name="project-status" data-project-id="<%= project.project_id %>">
-                <option value="new" <%= project.status === 'new' ? 'selected' : '' %>>New</option>
-                <option value="in-progress" <%= project.status === 'in-progress' ? 'selected' : '' %>>In progress</option>
-                <option value="on-hold" <%= project.status === 'on-hold' ? 'selected' : '' %>>On Hold</option>
-                <option value="finished" <%= project.status === 'finished' ? 'selected' : '' %>>Finished</option>
+            <label for="project-status" class="d-sm-flex d-none">Project Status: </label>
+            <select class="form-control" id="project-status" name="project-status"
+                data-project-id="<%= project.project_id %>">
+                <option value="new" <%= project.status === 'new' ? 'selected' : '' %>>● New</option>
+                <option value="in-progress" <%= project.status === 'in-progress' ? 'selected' : '' %>>● In progress
+                </option>
+                <option value="on-hold" <%= project.status === 'on-hold' ? 'selected' : '' %>>● On Hold</option>
+                <option value="finished" <%= project.status === 'finished' ? 'selected' : '' %>>● Finished</option>
             </select>
         </div>
 
         <% if (project.banner) { %>
-            <img class="m-4" src="../uploads/<%= project.banner %>" alt="Project Banner" width="500">
+        <img class="m-4" src="../uploads/<%= project.banner %>" alt="Project Banner" width="500">
         <% } %>
 
         <div class="wrapper m-4">
@@ -98,7 +101,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true"> 
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -114,8 +117,8 @@
                             <input type="text" class="form-control" id="project-name" placeholder="Enter project name">
                         </div>
                         <div class="form-group">
-                            <label for="project-name">Project Biography</label>
-                            <textarea class="form-control" id="project-name" placeholder="Enter project bio"></textarea>
+                            <label for="project-bio">Project Biography</label>
+                            <textarea class="form-control" id="project-bio" placeholder="Enter project bio"></textarea>
                         </div>
                         <div class="form-group">
                             <label for="project-users">Project Members</label>
@@ -140,7 +143,8 @@
             </div>
         </div>
     </div>
-    <script src="../public/js/update-project-status.js" ></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="../public/js/update-project-status.js"></script>
 </body>
 
 </html>

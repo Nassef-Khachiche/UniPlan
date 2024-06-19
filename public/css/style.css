@@ -314,9 +314,10 @@ main button:hover {
 @media (max-width: 900px) {
 
     .status-dropdown {
-        position: absolute;
-        top: 5px;
-        right: 10px;
+        position: relative;
+        width: 50%;
+        left: 20px;
+        margin-bottom: 30px;
     }
 
     .dashboard-container {
