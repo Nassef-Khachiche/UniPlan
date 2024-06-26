@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const noProjectsFound = document.getElementById('noProjectsFound');
     const sortDropdown = document.getElementById('sortDate');
     const searchBox = document.querySelector('.search-box');
+    const collegeCheckboxes = document.querySelectorAll('input[name="related_colleges"]');
     let currentPage = 1;
     let currentProjects = [...projects];
     let filteredProjects = [...projects];
@@ -17,13 +18,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function filterProjects(filter) {
-        filter = filter.toUpperCase();
+    function filterProjects() {
+        const filterText = searchBox.value.toUpperCase();
+        const selectedColleges = Array.from(collegeCheckboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value);
+
         filteredProjects = projects.filter(project => {
             const projectName = project.project_name.toUpperCase();
             const projectBio = project.project_bio.toUpperCase();
-            return projectName.includes(filter) || projectBio.includes(filter);
+            const matchesSearch = projectName.includes(filterText) || projectBio.includes(filterText);
+
+            if (selectedColleges.length === 0) {
+                return matchesSearch;
+            }
+
+            const matchesCollege = project.project_college.some(pc => selectedColleges.includes(pc.colleges.college_name));
+            return matchesSearch && matchesCollege;
         });
+
         currentPage = 1;
         setupPagination();
         displayProjects(currentPage);
@@ -41,19 +54,22 @@ document.addEventListener('DOMContentLoaded', () => {
             noProjectsFound.classList.add('d-none');
             paginatedProjects.forEach(project => {
                 const projectCard = `
-                    <div class="card-column mt-4">
-                        <div class="card project-card shadow">
-                            <div class="pill-container d-flex position-absolute top-0 start-0 m-2">
-                                ${project.project_college.map(pc => `<div class="pill bg-${pc.colleges.college_name} badge badge-primary rounded me-1">${pc.colleges.college_name}</div>`).join('')}
-                            </div>
-                            <h2 class="mt-4">${project.project_name}</h2>
-                            <p class="project-bio mb-0">${project.project_bio}</p>
-                            <div class=" d-flex justify-content-center align-items-center">
-                            <label class="form-check-label badge text-white rounded-pill px-2 py-1" for="endDate"><i class="ri-calendar-line me-2"></i>${project.end_date.slice(0,10)}</label>
-                            </div>
-                            <a id='view-project' href="/project/${project.project_id}">View Project</a>
+                <div class="card-column mt-4">
+                    <div class="card project-card shadow position-relative">
+                        <div class="pill-container d-flex position-absolute top-0 start-0 m-2">
+                            ${project.project_college.map(pc => `<div class="pill bg-${pc.colleges.college_name} badge badge-primary rounded me-1">${pc.colleges.college_name}</div>`).join('')}
+                        </div>
+                        <h2 class="mt-4">${project.project_name}</h2>
+                        <p class="project-bio mb-0">${project.project_bio}</p>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <label class="form-check-label badge text-white rounded-pill px-2 py-1 my-2" for="endDate">${project.end_date.slice(0,10)}</label>
+                        </div>
+                        <a id='view-project' href="/project/${project.project_id}">View Project</a>
+                        <div class="position-absolute bottom-0 start-0 m-2">
+                            <label class=" ${project.status} form-check-label badge rounded-pill px-2 py-1" for="endDate">● ${project.status} </label>                            
                         </div>
                     </div>
+                </div>
                 `;
                 projectContainer.innerHTML += projectCard;
             });
@@ -122,7 +138,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     searchBox.addEventListener('keyup', () => {
-        filterProjects(searchBox.value);
+        filterProjects();
+    });
+
+    collegeCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            filterProjects();
+        });
     });
 
     sortProjects(sortDropdown.value);

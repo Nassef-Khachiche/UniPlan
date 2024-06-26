@@ -309,6 +309,22 @@ main button:hover {
     height: 550px;
 }
 
+.project-card:hover .finished {
+    color:#343a40!important;
+}
+
+.project-card:hover .on-hold {
+    color:rgb(195, 0, 0)!important;
+}
+
+.project-card:hover .new {
+    color:green!important;
+}
+
+.project-card:hover .in-progress  {
+    color:orange!important;
+}
+
 
 /* Media Query for screens smaller than 900 pixels */
 @media (max-width: 900px) {
