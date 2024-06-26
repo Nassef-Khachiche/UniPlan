@@ -169,8 +169,8 @@ async function sendEmailNotification(email, project) {
         let transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: 'nassefkhachiche1@gmail.com',
-                pass: 'Besboe*415nk5'
+                user: 'email',
+                pass: 'password'
             }
         });
 
