@@ -19,7 +19,8 @@ app.use(
         cookie: {
             maxAge: 1000 * 60 * 60 * 24,
         }
-    }));
+    })
+);
 
 //sets up a middleware function so the server can use the JSON from requests
 app.use(bodyParser.json());
@@ -38,5 +39,5 @@ app.set('views', 'views');
 app.use('/', require('./router'));
 
 server.listen(port, () => {
-    console.log(`UniPlan is live on port ${port}`);
+    console.log(`Dropsyncr is live on port ${port}`);
 });
